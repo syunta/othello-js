@@ -1,5 +1,5 @@
 var table = new othelloTable();
-var fase = "black";
+var phase = "black";
 
 function drawTable(){
 	var text ="";
@@ -32,22 +32,25 @@ function othelloTable(){
 }
 
 //////////////////////関数//////////////////////
+/* 石を置く */
 function put(){
 	var x = 0;
 	var y = 0;
 	x = Number(document.getElementById("X").value);
 	y = Number(document.getElementById("Y").value);
 	
-	if(fase == "black"){
-		table.status[x-1][y-1] = "●";
-	}else if(fase == "white"){
-		table.status[x-1][y-1] = "○";
+	if(phase == "black"){
+		table.status[x][y] = "●";
+	}else if(phase == "white"){
+		table.status[x][y] = "○";
 	}
 	
-	if(fase == "black"){
-		fase = "white";
-	}else if(fase == "white"){
-		fase = "black";
+	if(phase == "black"){
+		phase = "white";
+	}else if(phase == "white"){
+		phase = "black";
 	}
+	
+
 	drawTable();
 }
