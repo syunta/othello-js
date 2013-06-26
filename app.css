@@ -1,0 +1,16 @@
+*{
+	margin:0px;
+	padding:0px;
+}
+div{
+	width:60px;
+	height:60px;
+	border:1px solid black;
+	float:left;
+	text-align:center;
+	line-height:60px;
+	font-size:60px;
+}
+.topColumn{
+	clear:both;
+}
