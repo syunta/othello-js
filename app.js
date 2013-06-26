@@ -1,4 +1,5 @@
 var table = new othelloTable();
+var fase = "black";
 
 function drawTable(){
 	var text ="";
@@ -8,7 +9,7 @@ function drawTable(){
 			if(x != 0){
 				text +="<div>" + table.status[x][y] + "</div>";
 			}else{
-				text +="<div class=topColumn>" + table.status[x][y] + "</div>";
+				text +="<div class='topColumn'>" + table.status[x][y] + "</div>";
 			}
 		}
 		text += "<br>";
@@ -16,6 +17,7 @@ function drawTable(){
 	
 	document.getElementById("othelloTable").innerHTML = text;
 }
+
 
 //////////////////////オブジェクトを定義//////////////////////
 /* オセロ盤 */
@@ -27,4 +29,25 @@ function othelloTable(){
 		["","○","●",""],
 		["","","",""]
 	];
+}
+
+//////////////////////関数//////////////////////
+function put(){
+	var x = 0;
+	var y = 0;
+	x = Number(document.getElementById("X").value);
+	y = Number(document.getElementById("Y").value);
+	
+	if(fase == "black"){
+		table.status[x-1][y-1] = "●";
+	}else if(fase == "white"){
+		table.status[x-1][y-1] = "○";
+	}
+	
+	if(fase == "black"){
+		fase = "white";
+	}else if(fase == "white"){
+		fase = "black";
+	}
+	drawTable();
 }
