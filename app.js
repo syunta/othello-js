@@ -25,9 +25,9 @@ function drawTable(){
 function othelloTable(){
 	this.status = [
 		["","","",""],
-		["","○","●",""],
-		["","○","●",""],
-		["","","",""]
+		["","○","",""],
+		["","○","",""],
+		["","●","",""]
 	];
 }
 
@@ -45,12 +45,35 @@ function put(){
 		table.status[x][y] = "○";
 	}
 	
+	reverse(x,y);
+	
 	if(phase == "black"){
 		phase = "white";
 	}else if(phase == "white"){
 		phase = "black";
 	}
 	
-
 	drawTable();
+}
+
+/* 石を裏返す */
+function reverse(x,y){
+	
+	var count = 0;
+	var theBack = "";
+	
+	if(phase == "black"){
+		theBack = "○";
+	}else if(phase == "white"){
+		theBack = "●";
+	}
+	
+	/* 右方向反転 */
+	for(var i = 1; table.status[x+i][y] == theBack; i++){
+		count = i;
+	}
+	
+	for(var i = 1; i <= count; i++){
+		table.status[x+i][y] = table.status[x][y];
+	}
 }
