@@ -72,8 +72,7 @@ function reverse(x,y){
 	for(var i = 1; table.status[x+i][y] == theBack; i++){
 		count = i;
 	}
-	
-	for(var i = 1; i <= count; i++){
+	for(var i = 0; i <= count; i++){
 		table.status[x+i][y] = table.status[x][y];
 	}
 }
