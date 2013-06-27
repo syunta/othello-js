@@ -1,4 +1,5 @@
 var table = new othelloTable();
+var ai = new AI();
 var phase = "black";
 
 function drawTable(){
@@ -37,6 +38,14 @@ function othelloTable(){
 	}
 }
 
+/* AI */
+function AI(){
+	this.select = function(){
+		var position = {x:1,y:1};
+		return position;
+	}
+}
+
 //////////////////////関数//////////////////////
 /* 手番の流れ */
 function phaseAction(){
@@ -44,12 +53,18 @@ function phaseAction(){
 	var y = 0;
 	x = Number(document.getElementById("X").value);
 	y = Number(document.getElementById("Y").value);
-
+	
 	if( checkPlacement(x,y) && checkReverse(x,y) ){
 		put(x,y);
 		reverse(x,y);
 		phaseChange();
 	}
+	
+	/* AIの手番 */
+	put(ai.select().x,ai.select().y);
+	reverse(ai.select().x,ai.select().y);
+	phaseChange();
+	
 	drawTable();
 }
 
@@ -63,6 +78,7 @@ function checkPlacement(x,y){
 	}
 }
 
+/* 石が裏返るか判定 */
 function checkReverse(x,y){
 	
 	var result = 0;
