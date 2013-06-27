@@ -40,8 +40,33 @@ function othelloTable(){
 
 /* AI */
 function AI(){
+	
+	/* 置ける場所の記憶 */
+	this.memory = new Array();
+	
+	/* 石を置ける場所を網羅検索 */
+	this.search = function(){
+		
+		for(var j = 1; j <= 4; j++){
+			for(var i = 1; i <= 4; i++){
+				if( checkPlacement(i,j) && checkReverse(i,j) ){
+					this.memory[this.memory.length] = {x:i,y:j};
+				}
+			}
+		}
+		
+		for(var i = 0; i < this.memory.length; i++){
+			console.log(this.memory[i]);
+		}
+		
+	}
+	
+	/* 手を選ぶ */
 	this.select = function(){
 		var position = {x:1,y:1};
+		
+		
+		
 		return position;
 	}
 }
@@ -58,12 +83,15 @@ function phaseAction(){
 		put(x,y);
 		reverse(x,y);
 		phaseChange();
+		
+		/* AIの手番 */
+		ai.search();
+		put(ai.select().x,ai.select().y);
+		reverse(ai.select().x,ai.select().y);
+		phaseChange();
+	}else{
+		alert("石を置けません");
 	}
-	
-	/* AIの手番 */
-	put(ai.select().x,ai.select().y);
-	reverse(ai.select().x,ai.select().y);
-	phaseChange();
 	
 	drawTable();
 }
@@ -71,7 +99,6 @@ function phaseAction(){
 /* 石が置けるか判定 */
 function checkPlacement(x,y){
 	if(table.status[x][y] == "○" || table.status[x][y] == "●"){
-		alert("すでに石が置いてあります");
 		return false;
 	}else{
 		return true;
@@ -82,7 +109,6 @@ function checkPlacement(x,y){
 function checkReverse(x,y){
 	
 	var result = 0;
-	console.log(result);
 	var theBack = "";
 	
 	if(phase == "black"){
@@ -97,7 +123,6 @@ function checkReverse(x,y){
 		var count = 0;
 		var squareCount = 1;
 		while(true){
-			console.log(result);
 			if( getTableStatus(x,y,squareCount,direction) == theBack){
 				count++;
 				squareCount++;
@@ -114,10 +139,8 @@ function checkReverse(x,y){
 	}
 	
 	if(result != 0){
-		console.log(result);
 		return true;
 	}else{
-		alert("石を置けません");
 		return false;
 	}
 }
