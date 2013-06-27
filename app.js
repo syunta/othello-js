@@ -3,7 +3,7 @@ var phase = "black";
 
 function drawTable(){
 	var text ="";
-	
+
 	for(var y = 1; y <= 4; y++){
 		for(var x = 1; x <= 4; x++){
 			if(x != 1){
@@ -14,7 +14,7 @@ function drawTable(){
 		}
 		text += "<br>";
 	}
-	
+
 	document.getElementById("othelloTable").innerHTML = text;
 }
 
@@ -31,7 +31,7 @@ function othelloTable(){
 		["dummy","","●","","","dummy"],
 		["dummy","dummy","dummy","dummy"]
 	];
-	
+
 	this.getStatus = function(x,y,i){
 		return this.status[x][y];
 	}
@@ -44,7 +44,7 @@ function phaseAction(){
 	var y = 0;
 	x = Number(document.getElementById("X").value);
 	y = Number(document.getElementById("Y").value);
-	
+
 	if( checkPlacement(x,y) && checkReverse(x,y) ){
 		put(x,y);
 		reverse(x,y);
@@ -60,6 +60,49 @@ function checkPlacement(x,y){
 		return false;
 	}else{
 		return true;
+	}
+}
+
+function checkReverse(x,y){
+	
+	var result = 0;
+	console.log(result);
+	var theBack = "";
+	
+	if(phase == "black"){
+		theFront = "●";
+		theBack = "○";
+	}else if(phase == "white"){
+		theFront = "○";
+		theBack = "●";
+	}
+	
+	for(var direction = 0; direction < 8; direction++){
+		var count = 0;
+		var squareCount = 1;
+		while(true){
+			console.log(result);
+			if( getTableStatus(x,y,squareCount,direction) == theBack){
+				count++;
+				squareCount++;
+			}else if( getTableStatus(x,y,squareCount,direction) == theFront){
+				if(count != 0){
+					result++;
+				}
+				break;
+			}else{
+				count = 0;
+				break;
+			}
+		}
+	}
+	
+	if(result != 0){
+		console.log(result);
+		return true;
+	}else{
+		alert("石を置けません");
+		return false;
 	}
 }
 
@@ -82,15 +125,17 @@ function phaseChange(){
 
 /* 石を裏返す */
 function reverse(x,y){
-	
+
 	var theBack = "";
-	
+
 	if(phase == "black"){
+		theFront = "●";
 		theBack = "○";
 	}else if(phase == "white"){
+		theFront = "○";
 		theBack = "●";
 	}
-	
+
 	/* 石を反転 */
 	for(var direction = 0; direction < 8; direction++){
 		var count = 0;
@@ -99,7 +144,7 @@ function reverse(x,y){
 			if( getTableStatus(x,y,squareCount,direction) == theBack){
 				count++;
 				squareCount++;
-			}else if( getTableStatus(x,y,squareCount,direction) == table.status[x][y]){
+			}else if( getTableStatus(x,y,squareCount,direction) == theFront){
 				break;
 			}else{
 				count = 0;
@@ -107,7 +152,7 @@ function reverse(x,y){
 			}
 		}
 		for(var i = 0; i <= count; i++){
-			setTableStatus(x,y,i,direction);
+			setTableStatus(x,y,i,direction,theFront);
 		}
 	}
 }
@@ -118,28 +163,28 @@ function getTableStatus(x,y,i,num){
 		{nx: x + i, ny: y    },
 		{nx: x    , ny: y + i},
 		{nx: x - i, ny: y    },
-		
+
 		{nx: x + i, ny: y + i},
 		{nx: x + i, ny: y - i},
 		{nx: x - i, ny: y + i},
 		{nx: x - i, ny: y - i}
 	];
-	
+
 	return table.status[direction[num].nx][direction[num].ny];
 }
 
-function setTableStatus(x,y,i,num){
+function setTableStatus(x,y,i,num,theFront){
 	var direction = [
 		{nx: x    , ny: y - i},
 		{nx: x + i, ny: y    },
 		{nx: x    , ny: y + i},
 		{nx: x - i, ny: y    },
-		
+
 		{nx: x + i, ny: y + i},
 		{nx: x + i, ny: y - i},
 		{nx: x - i, ny: y + i},
 		{nx: x - i, ny: y - i}
 	];
-	
-	table.status[direction[num].nx][direction[num].ny] = table.status[x][y];
+
+	table.status[direction[num].nx][direction[num].ny] = theFront;
 }
