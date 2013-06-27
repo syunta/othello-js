@@ -63,11 +63,14 @@ function AI(){
 	
 	/* 手を選ぶ */
 	this.select = function(){
-		var position = {x:1,y:1};
 		
-		
+		var position = {x:this.memory[0].x,y:this.memory[0].y};
 		
 		return position;
+	}
+	/* 忘れる */
+	this.forget = function(){
+		this.memory.splice(0,this.memory.length);
 	}
 }
 
@@ -83,11 +86,13 @@ function phaseAction(){
 		put(x,y);
 		reverse(x,y);
 		phaseChange();
+		drawTable();
 		
 		/* AIの手番 */
 		ai.search();
 		put(ai.select().x,ai.select().y);
 		reverse(ai.select().x,ai.select().y);
+		ai.forget();
 		phaseChange();
 	}else{
 		alert("石を置けません");
