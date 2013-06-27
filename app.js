@@ -27,10 +27,14 @@ function othelloTable(){
 		["dummy","dummy","dummy","dummy"],
 		["dummy","","","","","dummy"],
 		["dummy","","○","●","","dummy"],
-		["dummy","","●","○","","dummy"],
-		["dummy","","","","","dummy"],
+		["dummy","","○","○","","dummy"],
+		["dummy","","●","","","dummy"],
 		["dummy","dummy","dummy","dummy"]
 	];
+	
+	this.getStatus = function(x,y,i){
+		return this.status[x][y];
+	}
 }
 
 //////////////////////関数//////////////////////
@@ -76,50 +80,55 @@ function reverse(x,y){
 		theBack = "●";
 	}
 	
-	/* 反転チェック */
-	var num = 0;
-	var i = 1;
-	var test = "";
-	test = setDirection(x,y,num,i);
-	console.log(test);
-	
-	for(var num = 0; num < 4; num++){
-		
-		var count = reverseCheck(x,y,num,theBack);
-		
-		console.log(count);
-		
-		//for(var i = 0; i <= count; i++){
-		//	var reversedStone = setDirection(x,y,num,i) 
-		//	reversedStone = table.status[x][y];
-		//}
+	/* 石を反転 */
+	for(var direction = 0; direction < 8; direction++){
+		var count = 0;
+		var squareCount = 1;
+		while(true){
+			if( getTableStatus(x,y,squareCount,direction) == theBack){
+				count++;
+				squareCount++;
+			}else if( getTableStatus(x,y,squareCount,direction) == table.status[x][y]){
+				break;
+			}else{
+				count = 0;
+				break;
+			}
+		}
+		for(var i = 0; i <= count; i++){
+			setTableStatus(x,y,i,direction);
+		}
 	}
 }
 
-function reverseCheck(x,y,num,theBack){
-	
-	var count = 0;
-	
-		for(var i = 0; setDirection(x,y,num,i) == theBack; i++){
-			
-			count++;
-			
-			if(table.status[x][y+i] != table.status[x][y]){
-				count = 0;
-			}
-		}
-	return count;
-}
-
-function setDirection(x,y,num,i){
+function getTableStatus(x,y,i,num){
 	var direction = [
-		table.status[x][y-i],
-		table.status[x+i][y],
-		table.status[x][y+i],
-		table.status[x-i][y]
+		{nx: x    , ny: y - i},
+		{nx: x + i, ny: y    },
+		{nx: x    , ny: y + i},
+		{nx: x - i, ny: y    },
+		
+		{nx: x + i, ny: y + i},
+		{nx: x + i, ny: y - i},
+		{nx: x - i, ny: y + i},
+		{nx: x - i, ny: y - i}
 	];
 	
-	console.log(direction[num]);
+	return table.status[direction[num].nx][direction[num].ny];
+}
+
+function setTableStatus(x,y,i,num){
+	var direction = [
+		{nx: x    , ny: y - i},
+		{nx: x + i, ny: y    },
+		{nx: x    , ny: y + i},
+		{nx: x - i, ny: y    },
+		
+		{nx: x + i, ny: y + i},
+		{nx: x + i, ny: y - i},
+		{nx: x - i, ny: y + i},
+		{nx: x - i, ny: y - i}
+	];
 	
-	return direction[num];
+	table.status[direction[num].nx][direction[num].ny] = table.status[x][y];
 }
