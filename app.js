@@ -45,15 +45,26 @@ function phaseAction(){
 	x = Number(document.getElementById("X").value);
 	y = Number(document.getElementById("Y").value);
 	
-	put(x,y);
-	reverse(x,y);
-	phaseChange();
+	if( checkPlacement(x,y) && checkReverse(x,y) ){
+		put(x,y);
+		reverse(x,y);
+		phaseChange();
+	}
 	drawTable();
+}
+
+/* 石が置けるか判定 */
+function checkPlacement(x,y){
+	if(table.status[x][y] == "○" || table.status[x][y] == "●"){
+		alert("すでに石が置いてあります");
+		return false;
+	}else{
+		return true;
+	}
 }
 
 /* 石を置く */
 function put(x,y){
-	
 	if(phase == "black"){
 		table.status[x][y] = "●";
 	}else if(phase == "white"){
