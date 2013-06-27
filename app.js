@@ -4,9 +4,9 @@ var phase = "black";
 function drawTable(){
 	var text ="";
 	
-	for(var y = 0; y < 4; y++){
-		for(var x = 0; x < 4; x++){
-			if(x != 0){
+	for(var y = 1; y <= 4; y++){
+		for(var x = 1; x <= 4; x++){
+			if(x != 1){
 				text +="<div>" + table.status[x][y] + "</div>";
 			}else{
 				text +="<div class='topColumn'>" + table.status[x][y] + "</div>";
@@ -24,10 +24,12 @@ function drawTable(){
 
 function othelloTable(){
 	this.status = [
-		["","","",""],
-		["","○","●",""],
-		["","●","",""],
-		["","","","",]
+		["dummy","dummy","dummy","dummy"],
+		["dummy","","","","","dummy"],
+		["dummy","","○","●","","dummy"],
+		["dummy","","●","○","","dummy"],
+		["dummy","","","","","dummy"],
+		["dummy","dummy","dummy","dummy"]
 	];
 }
 
