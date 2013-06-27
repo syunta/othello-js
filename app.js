@@ -4,8 +4,8 @@ var phase = "black";
 function drawTable(){
 	var text ="";
 	
-	for(var y = 0; y < table.status.length; y++){
-		for(var x = 0; x < table.status.length; x++){
+	for(var y = 0; y < 4; y++){
+		for(var x = 0; x < 4; x++){
 			if(x != 0){
 				text +="<div>" + table.status[x][y] + "</div>";
 			}else{
@@ -25,35 +25,42 @@ function drawTable(){
 function othelloTable(){
 	this.status = [
 		["","","",""],
-		["","○","",""],
-		["","○","",""],
-		["","●","",""]
+		["","○","●",""],
+		["","●","",""],
+		["","","","",]
 	];
 }
 
 //////////////////////関数//////////////////////
-/* 石を置く */
-function put(){
+/* 手番の流れ */
+function phaseAction(){
 	var x = 0;
 	var y = 0;
 	x = Number(document.getElementById("X").value);
 	y = Number(document.getElementById("Y").value);
+	
+	put(x,y);
+	reverse(x,y);
+	phaseChange();
+	drawTable();
+}
+
+/* 石を置く */
+function put(x,y){
 	
 	if(phase == "black"){
 		table.status[x][y] = "●";
 	}else if(phase == "white"){
 		table.status[x][y] = "○";
 	}
-	
-	reverse(x,y);
-	
+}
+/* 手番の交代 */
+function phaseChange(){
 	if(phase == "black"){
 		phase = "white";
 	}else if(phase == "white"){
 		phase = "black";
 	}
-	
-	drawTable();
 }
 
 /* 石を裏返す */
