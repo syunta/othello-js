@@ -26,10 +26,10 @@ var passCount = 0;;
 function othelloTable(){
 	this.status = [
 		["dummy","dummy","dummy","dummy"],
-		["dummy","○","●","","","dummy"],
+		["dummy","","","","","dummy"],
 		["dummy","","○","●","","dummy"],
-		["dummy","○","○","○","●","dummy"],
-		["dummy","●","○","○","","dummy"],
+		["dummy","","●","○","","dummy"],
+		["dummy","","","","","dummy"],
 		["dummy","dummy","dummy","dummy"]
 	];
 
@@ -40,13 +40,22 @@ function othelloTable(){
 
 /* AI */
 function AI(){
-
+	/* スコアテーブル */
+	this.scoreTable = [
+		[-1,-1,-1,-1,-1,-1],
+		[-1, 9, 0, 0, 9,-1],
+		[-1, 0, 1, 1, 0,-1],
+		[-1, 0, 1, 1, 0,-1],
+		[-1, 9, 0, 0, 9,-1],
+		[-1,-1,-1,-1,-1,-1]
+	];
+	
 	/* 置ける場所の記憶 */
 	this.memory = new Array();
-
+	
 	/* 石を置ける場所を網羅検索 */
 	this.search = function(){
-
+	
 		for(var j = 1; j <= 4; j++){
 			for(var i = 1; i <= 4; i++){
 				if( checkPlacement(i,j) && checkReverse(i,j) ){
@@ -54,18 +63,23 @@ function AI(){
 				}
 			}
 		}
-
-		for(var i = 0; i < this.memory.length; i++){
-			console.log(this.memory[i]);
-		}
-
 	}
-
+	
 	/* 手を選ぶ */
 	this.select = function(){
 		
-		var position = {x:this.memory[0].x,y:this.memory[0].y};
+		var selection ={};
+		var highScore = 0;
 		
+		for(var i = 0; i < this.memory.length; i++){
+			if(highScore <= this.scoreTable[this.memory[i].x][this.memory[i].y]){
+				selection = {x:this.memory[i].x,y:this.memory[i].y};
+				highScore = this.scoreTable[this.memory[i].x][this.memory[i].y];
+			}
+		}
+		
+		var position = {x:selection.x,y:selection.y};
+		console.log(position);
 		return position;
 	}
 	/* 忘れる */
@@ -114,12 +128,13 @@ function phaseAction(){
 
 function aiAction(){
 	var gameEndFlag = true;
+	var selectedPosition = {};
 	
 	ai.search();
-	console.log(passCount);
+	selectedPosition = ai.select();
 	if(ai.memory.length != 0){
-		put(ai.select().x,ai.select().y);
-		reverse(ai.select().x,ai.select().y);
+		put(selectedPosition.x,selectedPosition.y);
+		reverse(selectedPosition.x,selectedPosition.y);
 	}else{
 		passCount += 1;
 	}
