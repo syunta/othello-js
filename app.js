@@ -18,24 +18,70 @@ function drawTable(){
 //////////////////////変数を定義//////////////////////
 var table = new othelloTable();
 var ai = new AI();
-var phase = "black";
+var phase = "●";
 var passCount = 0;;
+
+function test(){
+	
+	console.log(makeGameTree(table.status,phase));
+	
+}
+
+function makeGameTree(tableStatus,phase){
+	return{
+		tableStatus:tableStatus,
+		phase:phase,
+		positions:makeTreeChild(tableStatus,phase)
+	};
+}
+
+function makeTreeChild(tableStatus,phase){
+	var positions = [];
+	
+	for(var y = 1; y <= 4; y++){
+		for(var x = 1; x <= 4; x++){
+			if( checkPlacement(x,y) && checkReverse(x,y) ){
+				positions.push(
+					makeGameTree(
+						makeNextTable(tableStatus,phase,x,y),
+						nextPhase(phase)
+					)
+				);
+			}
+		}
+	}
+	
+	return positions;
+}
+
+function makeNextTable(tableStatus,phase,x,y){
+	
+	tableStatus[x][y] = phase;
+	
+}
+function nextPhase(phase){
+	var nextPhase = "";
+	if(phase == "●"){
+		nextPhase = "○";
+	}else if(phase == "○"){
+		nextPhase = "●";
+	}
+	
+	return nextPhase;
+}
+
 //////////////////////オブジェクトを定義//////////////////////
 /* オセロ盤 */
 
 function othelloTable(){
 	this.status = [
-		["dummy","dummy","dummy","dummy"],
+		["dummy","dummy","dummy","dummy","dummy","dummy"],
 		["dummy","","","","","dummy"],
 		["dummy","","○","●","","dummy"],
 		["dummy","","●","○","","dummy"],
 		["dummy","","","","","dummy"],
-		["dummy","dummy","dummy","dummy"]
+		["dummy","dummy","dummy","dummy","dummy","dummy"]
 	];
-
-	this.getStatus = function(x,y,i){
-		return this.status[x][y];
-	}
 }
 
 /* AI */
@@ -161,10 +207,10 @@ function checkReverse(x,y){
 	var result = 0;
 	var theBack = "";
 
-	if(phase == "black"){
+	if(phase == "●"){
 		theFront = "●";
 		theBack = "○";
-	}else if(phase == "white"){
+	}else if(phase == "○"){
 		theFront = "○";
 		theBack = "●";
 	}
@@ -197,9 +243,9 @@ function checkReverse(x,y){
 
 /* 石を置く */
 function put(x,y){
-	if(phase == "black"){
+	if(phase == "●"){
 		table.status[x][y] = "●";
-	}else if(phase == "white"){
+	}else if(phase == "○"){
 		table.status[x][y] = "○";
 	}
 }
@@ -209,10 +255,10 @@ function reverse(x,y){
 
 	var theBack = "";
 
-	if(phase == "black"){
+	if(phase == "●"){
 		theFront = "●";
 		theBack = "○";
-	}else if(phase == "white"){
+	}else if(phase == "○"){
 		theFront = "○";
 		theBack = "●";
 	}
@@ -240,10 +286,10 @@ function reverse(x,y){
 
 /* 手番の交代 */
 function phaseChange(){
-	if(phase == "black"){
-		phase = "white";
-	}else if(phase == "white"){
-		phase = "black";
+	if(phase == "●"){
+		phase = "○";
+	}else if(phase == "○"){
+		phase = "●";
 	}
 }
 
