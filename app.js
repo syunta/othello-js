@@ -201,34 +201,21 @@ function reverse(x,y){
 	}
 }
 
+var direction = [
+	{nx: 0,ny:-1},
+	{nx: 1,ny: 0},
+	{nx: 0,ny: 1},
+	{nx:-1,ny: 0},
+	{nx: 1,ny: 1},
+	{nx: 1,ny:-1},
+	{nx:-1,ny: 1},
+	{nx:-1,ny:-1}
+];
+
 function getTableStatus(x,y,i,num){
-	var direction = [
-		{nx: x    , ny: y - i},
-		{nx: x + i, ny: y    },
-		{nx: x    , ny: y + i},
-		{nx: x - i, ny: y    },
-
-		{nx: x + i, ny: y + i},
-		{nx: x + i, ny: y - i},
-		{nx: x - i, ny: y + i},
-		{nx: x - i, ny: y - i}
-	];
-
-	return table.status[direction[num].nx][direction[num].ny];
+	return table.status[x+i*direction[num].nx][y+i*direction[num].ny];
 }
 
 function setTableStatus(x,y,i,num,theFront){
-	var direction = [
-		{nx: x    , ny: y - i},
-		{nx: x + i, ny: y    },
-		{nx: x    , ny: y + i},
-		{nx: x - i, ny: y    },
-
-		{nx: x + i, ny: y + i},
-		{nx: x + i, ny: y - i},
-		{nx: x - i, ny: y + i},
-		{nx: x - i, ny: y - i}
-	];
-
-	table.status[direction[num].nx][direction[num].ny] = theFront;
+	table.status[x+i*direction[num].nx][y+i*direction[num].ny] = theFront;
 }
