@@ -51,18 +51,13 @@ function AI(){
 	];
 	
 	/* 置ける場所の記憶 */
-	this.memory = new Array();
+	this.memory = [];
 	
 	/* 石を置ける場所を網羅検索 */
 	this.search = function(){
-	
-		for(var j = 1; j <= 4; j++){
-			for(var i = 1; i <= 4; i++){
-				if( checkPlacement(i,j) && checkReverse(i,j) ){
-					this.memory[this.memory.length] = {x:i,y:j};
-				}
-			}
-		}
+		
+		this.memory = listPossiblePositions();
+		
 	}
 	
 	/* 手を選ぶ */
@@ -99,13 +94,8 @@ function phaseAction(){
 	x = Number(document.getElementById("X").value);
 	y = Number(document.getElementById("Y").value);
 	
-	for(var j = 1; j <= 4; j++){
-		for(var i = 1; i <= 4; i++){
-			if( checkPlacement(i,j) && checkReverse(i,j) ){
-				passCount = 0;
-				break;
-			}
-		}
+	if(listPossiblePositions().length != 0){
+		passCount = 0;
 	}
 	
 	if(passCount == 1){
@@ -146,13 +136,8 @@ function aiAction(){
 		gameOver();
 	}
 	
-	for(var j = 1; j <= 4; j++){
-		for(var i = 1; i <= 4; i++){
-			if( checkPlacement(i,j) && checkReverse(i,j) ){
-				gameEndFlag = false;
-				break;
-			}
-		}
+	if(listPossiblePositions().length != 0){
+		gameEndFlag = false;
 	}
 	
 	if(gameEndFlag){
@@ -287,12 +272,17 @@ function gameOver(){
 }
 
 //////////////////////関数ライブラリ//////////////////////
-function search(){
-	for(var j = 1; j <= 4; j++){
-		for(var i = 1; i <= 4; i++){
-			if( checkPlacement(i,j) && checkReverse(i,j) ){
-				
+/* 盤面の状態を見て置けるところを返す */
+function listPossiblePositions(){
+	var positions = [];
+
+	for(var y = 1; y <= 4; y++){
+		for(var x = 1; x <= 4; x++){
+			if( checkPlacement(x,y) && checkReverse(x,y) ){
+				positions.push({x:x,y:y});
 			}
 		}
 	}
+	
+	return positions;
 }
