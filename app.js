@@ -19,17 +19,17 @@ function drawTable(){
 var table = new othelloTable();
 var ai = new AI();
 var phase = "black";
-var passFlag = true;
+var passCount = 0;;
 //////////////////////オブジェクトを定義//////////////////////
 /* オセロ盤 */
 
 function othelloTable(){
 	this.status = [
 		["dummy","dummy","dummy","dummy"],
-		["dummy","●","●","","","dummy"],
-		["dummy","","○","●","●","dummy"],
-		["dummy","●","○","○","●","dummy"],
-		["dummy","●","","","●","dummy"],
+		["dummy","○","●","","","dummy"],
+		["dummy","","○","●","","dummy"],
+		["dummy","○","○","○","●","dummy"],
+		["dummy","●","○","○","","dummy"],
 		["dummy","dummy","dummy","dummy"]
 	];
 
@@ -78,7 +78,7 @@ function AI(){
 /* 手番の流れ */
 function phaseAction(){
 	
-	passFlag = true;
+	passCount = 1;
 	
 	var x = 0;
 	var y = 0;
@@ -88,12 +88,13 @@ function phaseAction(){
 	for(var j = 1; j <= 4; j++){
 		for(var i = 1; i <= 4; i++){
 			if( checkPlacement(i,j) && checkReverse(i,j) ){
-				passFlag = false;
+				passCount = 0;
+				break;
 			}
 		}
 	}
 	
-	if(passFlag == true){
+	if(passCount == 1){
 		phaseChange();
 		/* AIの手番 */
 		setTimeout(aiAction,1000);
@@ -112,18 +113,35 @@ function phaseAction(){
 }
 
 function aiAction(){
+	var gameEndFlag = true;
+	
 	ai.search();
+	console.log(passCount);
 	if(ai.memory.length != 0){
 		put(ai.select().x,ai.select().y);
 		reverse(ai.select().x,ai.select().y);
-		passFlag = false;
+	}else{
+		passCount += 1;
 	}
 	ai.forget();
 	phaseChange();
 	drawTable();
 	
-	if(passFlag = true){
-		alert("ゲームセット！！");
+	if(passCount == 2){
+		gameOver();
+	}
+	
+	for(var j = 1; j <= 4; j++){
+		for(var i = 1; i <= 4; i++){
+			if( checkPlacement(i,j) && checkReverse(i,j) ){
+				gameEndFlag = false;
+				break;
+			}
+		}
+	}
+	
+	if(gameEndFlag){
+		gameOver();
 	}
 	
 }
@@ -246,4 +264,20 @@ function getTableStatus(x,y,i,num){
 
 function setTableStatus(x,y,i,num,theFront){
 	table.status[x+i*directionCorrection[num].nx][y+i*directionCorrection[num].ny] = theFront;
+}
+
+/* ゲーム終了 */
+function gameOver(){
+	alert("ゲームセット！！");
+}
+
+//////////////////////関数ライブラリ//////////////////////
+function search(){
+	for(var j = 1; j <= 4; j++){
+		for(var i = 1; i <= 4; i++){
+			if( checkPlacement(i,j) && checkReverse(i,j) ){
+				
+			}
+		}
+	}
 }
