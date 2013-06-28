@@ -19,16 +19,17 @@ function drawTable(){
 var table = new othelloTable();
 var ai = new AI();
 var phase = "black";
+var passFlag = true;
 //////////////////////オブジェクトを定義//////////////////////
 /* オセロ盤 */
 
 function othelloTable(){
 	this.status = [
 		["dummy","dummy","dummy","dummy"],
-		["dummy","","","","","dummy"],
-		["dummy","","○","●","","dummy"],
-		["dummy","","○","○","","dummy"],
-		["dummy","","●","","","dummy"],
+		["dummy","●","●","","","dummy"],
+		["dummy","","○","●","●","dummy"],
+		["dummy","●","○","○","●","dummy"],
+		["dummy","●","","","●","dummy"],
 		["dummy","dummy","dummy","dummy"]
 	];
 
@@ -62,9 +63,9 @@ function AI(){
 
 	/* 手を選ぶ */
 	this.select = function(){
-
+		
 		var position = {x:this.memory[0].x,y:this.memory[0].y};
-
+		
 		return position;
 	}
 	/* 忘れる */
@@ -76,31 +77,55 @@ function AI(){
 //////////////////////関数//////////////////////
 /* 手番の流れ */
 function phaseAction(){
+	
+	passFlag = true;
+	
 	var x = 0;
 	var y = 0;
 	x = Number(document.getElementById("X").value);
 	y = Number(document.getElementById("Y").value);
-
-	if( checkPlacement(x,y) && checkReverse(x,y) ){
+	
+	for(var j = 1; j <= 4; j++){
+		for(var i = 1; i <= 4; i++){
+			if( checkPlacement(i,j) && checkReverse(i,j) ){
+				passFlag = false;
+			}
+		}
+	}
+	
+	if(passFlag == true){
+		phaseChange();
+		/* AIの手番 */
+		setTimeout(aiAction,1000);
+	}else if( checkPlacement(x,y) && checkReverse(x,y) ){
 		put(x,y);
 		reverse(x,y);
 		phaseChange();
 		drawTable();
 
 		/* AIの手番 */
-		setTimeout(aiAction,1000)
+		setTimeout(aiAction,1000);
 	}else{
 		alert("石を置けません");
 	}
+	
 }
 
 function aiAction(){
 	ai.search();
-	put(ai.select().x,ai.select().y);
-	reverse(ai.select().x,ai.select().y);
+	if(ai.memory.length != 0){
+		put(ai.select().x,ai.select().y);
+		reverse(ai.select().x,ai.select().y);
+		passFlag = false;
+	}
 	ai.forget();
 	phaseChange();
 	drawTable();
+	
+	if(passFlag = true){
+		alert("ゲームセット！！");
+	}
+	
 }
 
 /* 石が置けるか判定 */
