@@ -1,7 +1,4 @@
-var table = new othelloTable();
-var ai = new AI();
-var phase = "black";
-
+//////////////////////HTML描画//////////////////////
 function drawTable(){
 	var text ="";
 
@@ -18,8 +15,10 @@ function drawTable(){
 
 	document.getElementById("othelloTable").innerHTML = text;
 }
-
-
+//////////////////////変数を定義//////////////////////
+var table = new othelloTable();
+var ai = new AI();
+var phase = "black";
 //////////////////////オブジェクトを定義//////////////////////
 /* オセロ盤 */
 
@@ -40,13 +39,13 @@ function othelloTable(){
 
 /* AI */
 function AI(){
-	
+
 	/* 置ける場所の記憶 */
 	this.memory = new Array();
-	
+
 	/* 石を置ける場所を網羅検索 */
 	this.search = function(){
-		
+
 		for(var j = 1; j <= 4; j++){
 			for(var i = 1; i <= 4; i++){
 				if( checkPlacement(i,j) && checkReverse(i,j) ){
@@ -54,18 +53,18 @@ function AI(){
 				}
 			}
 		}
-		
+
 		for(var i = 0; i < this.memory.length; i++){
 			console.log(this.memory[i]);
 		}
-		
+
 	}
-	
+
 	/* 手を選ぶ */
 	this.select = function(){
-		
+
 		var position = {x:this.memory[0].x,y:this.memory[0].y};
-		
+
 		return position;
 	}
 	/* 忘れる */
@@ -81,23 +80,26 @@ function phaseAction(){
 	var y = 0;
 	x = Number(document.getElementById("X").value);
 	y = Number(document.getElementById("Y").value);
-	
+
 	if( checkPlacement(x,y) && checkReverse(x,y) ){
 		put(x,y);
 		reverse(x,y);
 		phaseChange();
 		drawTable();
-		
+
 		/* AIの手番 */
-		ai.search();
-		put(ai.select().x,ai.select().y);
-		reverse(ai.select().x,ai.select().y);
-		ai.forget();
-		phaseChange();
+		setTimeout(aiAction,1000)
 	}else{
 		alert("石を置けません");
 	}
-	
+}
+
+function aiAction(){
+	ai.search();
+	put(ai.select().x,ai.select().y);
+	reverse(ai.select().x,ai.select().y);
+	ai.forget();
+	phaseChange();
 	drawTable();
 }
 
@@ -112,10 +114,10 @@ function checkPlacement(x,y){
 
 /* 石が裏返るか判定 */
 function checkReverse(x,y){
-	
+
 	var result = 0;
 	var theBack = "";
-	
+
 	if(phase == "black"){
 		theFront = "●";
 		theBack = "○";
@@ -123,7 +125,7 @@ function checkReverse(x,y){
 		theFront = "○";
 		theBack = "●";
 	}
-	
+
 	for(var direction = 0; direction < 8; direction++){
 		var count = 0;
 		var squareCount = 1;
@@ -142,7 +144,7 @@ function checkReverse(x,y){
 			}
 		}
 	}
-	
+
 	if(result != 0){
 		return true;
 	}else{
@@ -156,14 +158,6 @@ function put(x,y){
 		table.status[x][y] = "●";
 	}else if(phase == "white"){
 		table.status[x][y] = "○";
-	}
-}
-/* 手番の交代 */
-function phaseChange(){
-	if(phase == "black"){
-		phase = "white";
-	}else if(phase == "white"){
-		phase = "black";
 	}
 }
 
@@ -201,21 +195,30 @@ function reverse(x,y){
 	}
 }
 
-var direction = [
+/* 手番の交代 */
+function phaseChange(){
+	if(phase == "black"){
+		phase = "white";
+	}else if(phase == "white"){
+		phase = "black";
+	}
+}
+
+var directionCorrection = [
 	{nx: 0,ny:-1},
-	{nx: 1,ny: 0},
-	{nx: 0,ny: 1},
-	{nx:-1,ny: 0},
-	{nx: 1,ny: 1},
 	{nx: 1,ny:-1},
+	{nx: 1,ny: 0},
+	{nx: 1,ny: 1},
+	{nx: 0,ny: 1},
 	{nx:-1,ny: 1},
+	{nx:-1,ny: 0},
 	{nx:-1,ny:-1}
 ];
 
 function getTableStatus(x,y,i,num){
-	return table.status[x+i*direction[num].nx][y+i*direction[num].ny];
+	return table.status[x+i*directionCorrection[num].nx][y+i*directionCorrection[num].ny];
 }
 
 function setTableStatus(x,y,i,num,theFront){
-	table.status[x+i*direction[num].nx][y+i*direction[num].ny] = theFront;
+	table.status[x+i*directionCorrection[num].nx][y+i*directionCorrection[num].ny] = theFront;
 }
