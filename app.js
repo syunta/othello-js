@@ -19,12 +19,40 @@ function drawTable(){
 var table = new othelloTable();
 var ai = new AI();
 var phase = "●";
-var passCount = 0;;
+var passCount = 0;
 
-function test(){
+function makeRoot(){
 	
-	console.log(makeGameTree(table.status,phase));
+	var root = table.status;
 	
+	makeBranch(root,phase);
+	
+}
+
+function makeBranch(parentNodeStatus,phase){
+	
+	var branch = listPossiblePositions();
+	for(var i = 0; i < branch.length; i++){
+		console.log(branch[i]);
+	}
+	
+	if( listPossiblePositions().length != 0 ){
+		
+		for(var i = 0; i < listPossiblePositions().length; i++){
+			makeNode(parentNodeStatus,branch[i].x,branch[i].y,phase);
+		}
+		
+	}else{
+		/* なにもしない */
+		console.log(parentNodeStatus.join('\n'));
+	}
+}
+
+function makeNode(nodeStatus,x,y,phase){
+	put(x,y);
+	reverse(x,y);
+	console.log(nodeStatus.join('\n'));
+//	makeBranch(nodeStatus,phase);
 }
 
 function makeGameTree(tableStatus,phase){
@@ -75,12 +103,12 @@ function nextPhase(phase){
 
 function othelloTable(){
 	this.status = [
-		["dummy","dummy","dummy","dummy","dummy","dummy"],
-		["dummy","","","","","dummy"],
-		["dummy","","○","●","","dummy"],
-		["dummy","","●","○","","dummy"],
-		["dummy","","","","","dummy"],
-		["dummy","dummy","dummy","dummy","dummy","dummy"]
+		["■","■","■","■","■","■"],
+		["■"," "," "," "," ","■"],
+		["■"," ","○","●"," ","■"],
+		["■"," ","●","○"," ","■"],
+		["■"," "," "," "," ","■"],
+		["■","■","■","■","■","■"]
 	];
 }
 
