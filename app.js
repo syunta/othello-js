@@ -18,7 +18,7 @@ function drawTable(){
 //////////////////////変数を定義//////////////////////
 var table = new othelloTable();
 var ai = new AI();
-var phase = "●";
+var gamePhase = "●";
 var passCount = 0;
 
 function makeRoot(){
@@ -55,49 +55,6 @@ function makeNode(nodeStatus,x,y,phase){
 //	makeBranch(nodeStatus,phase);
 }
 
-function makeGameTree(tableStatus,phase){
-	return{
-		tableStatus:tableStatus,
-		phase:phase,
-		positions:makeTreeChild(tableStatus,phase)
-	};
-}
-
-function makeTreeChild(tableStatus,phase){
-	var positions = [];
-	
-	for(var y = 1; y <= 4; y++){
-		for(var x = 1; x <= 4; x++){
-			if( checkPlacement(x,y) && checkReverse(x,y) ){
-				positions.push(
-					makeGameTree(
-						makeNextTable(tableStatus,phase,x,y),
-						nextPhase(phase)
-					)
-				);
-			}
-		}
-	}
-	
-	return positions;
-}
-
-function makeNextTable(tableStatus,phase,x,y){
-	
-	tableStatus[x][y] = phase;
-	
-}
-function nextPhase(phase){
-	var nextPhase = "";
-	if(phase == "●"){
-		nextPhase = "○";
-	}else if(phase == "○"){
-		nextPhase = "●";
-	}
-	
-	return nextPhase;
-}
-
 //////////////////////オブジェクトを定義//////////////////////
 /* オセロ盤 */
 
@@ -128,9 +85,9 @@ function AI(){
 	this.memory = [];
 	
 	/* 石を置ける場所を網羅検索 */
-	this.search = function(){
+	this.search = function(phase){
 		
-		this.memory = listPossiblePositions();
+		this.memory = listPossiblePositions(phase);
 		
 	}
 	
@@ -168,18 +125,18 @@ function phaseAction(){
 	x = Number(document.getElementById("X").value);
 	y = Number(document.getElementById("Y").value);
 	
-	if(listPossiblePositions().length != 0){
+	if(listPossiblePositions(gamePhase).length != 0){
 		passCount = 0;
 	}
 	
 	if(passCount == 1){
-		phaseChange();
+		gamePhase = phaseChange(gamePhase);
 		/* AIの手番 */
 		setTimeout(aiAction,1000);
-	}else if( checkPlacement(x,y) && checkReverse(x,y) ){
-		put(x,y);
-		reverse(x,y);
-		phaseChange();
+	}else if( checkPlacement(x,y) && checkReverse(x,y,gamePhase) ){
+		put(x,y,gamePhase);
+		reverse(x,y,gamePhase);
+		gamePhase = phaseChange(gamePhase);
 		drawTable();
 
 		/* AIの手番 */
@@ -194,23 +151,23 @@ function aiAction(){
 	var gameEndFlag = true;
 	var selectedPosition = {};
 	
-	ai.search();
+	ai.search(gamePhase);
 	selectedPosition = ai.select();
 	if(ai.memory.length != 0){
-		put(selectedPosition.x,selectedPosition.y);
-		reverse(selectedPosition.x,selectedPosition.y);
+		put(selectedPosition.x,selectedPosition.y,gamePhase);
+		reverse(selectedPosition.x,selectedPosition.y,gamePhase);
 	}else{
 		passCount += 1;
 	}
 	ai.forget();
-	phaseChange();
+	gamePhase = phaseChange(gamePhase);
 	drawTable();
 	
 	if(passCount == 2){
 		gameOver();
 	}
 	
-	if(listPossiblePositions().length != 0){
+	if(listPossiblePositions(gamePhase).length != 0){
 		gameEndFlag = false;
 	}
 	
@@ -230,7 +187,7 @@ function checkPlacement(x,y){
 }
 
 /* 石が裏返るか判定 */
-function checkReverse(x,y){
+function checkReverse(x,y,phase){
 
 	var result = 0;
 	var theBack = "";
@@ -270,7 +227,7 @@ function checkReverse(x,y){
 }
 
 /* 石を置く */
-function put(x,y){
+function put(x,y,phase){
 	if(phase == "●"){
 		table.status[x][y] = "●";
 	}else if(phase == "○"){
@@ -279,7 +236,7 @@ function put(x,y){
 }
 
 /* 石を裏返す */
-function reverse(x,y){
+function reverse(x,y,phase){
 
 	var theBack = "";
 
@@ -313,12 +270,13 @@ function reverse(x,y){
 }
 
 /* 手番の交代 */
-function phaseChange(){
+function phaseChange(phase){
 	if(phase == "●"){
 		phase = "○";
 	}else if(phase == "○"){
 		phase = "●";
 	}
+	return phase;
 }
 
 var directionCorrection = [
@@ -347,12 +305,12 @@ function gameOver(){
 
 //////////////////////関数ライブラリ//////////////////////
 /* 盤面の状態を見て置けるところを返す */
-function listPossiblePositions(){
+function listPossiblePositions(phase){
 	var positions = [];
 
 	for(var y = 1; y <= 4; y++){
 		for(var x = 1; x <= 4; x++){
-			if( checkPlacement(x,y) && checkReverse(x,y) ){
+			if( checkPlacement(x,y) && checkReverse(x,y,phase) ){
 				positions.push({x:x,y:y});
 			}
 		}
