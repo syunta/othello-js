@@ -14,17 +14,9 @@ var direction = [
 function makeRoot(){
 	
 	var phase = "●";
-	var root = [
-		["■","■","■","■","■","■"],
-		["■"," "," "," "," ","■"],
-		["■"," ","○","●"," ","■"],
-		["■"," ","●","○"," ","■"],
-		["■"," "," "," "," ","■"],
-		["■","■","■","■","■","■"]
-	];
+	var root = othelloTable.status;
 	
 	makeBranch(root,phase);
-	
 }
 
 function makeBranch(node,phase){
@@ -44,11 +36,10 @@ function makeBranch(node,phase){
 
 function makeNode(parentNode,x,y,phase){
 	var newNode = put(parentNode,x,y,phase);
-//	nodeStatus = reverse(nodeStatus,x,y,phase);
-
+	reverse(newNode,x,y,phase);
+	
 	console.log(newNode.join("\n"));
 //	makeBranch(newNode,phase);
-//	return newNode;
 }
 
 /* 石を置く */
@@ -76,13 +67,14 @@ function reverse(tableStatus,x,y,phase){
 	/* 石を反転 */
 	var reverse = countReverse(tableStatus,x,y,phase);
 	
-	for(var i = 0; i < reverse.count; i++){
-		tableStatus
-		[ x + i * direction[ reverse[0].dir ].nx ]
-		[ y + i * direction[ reverse[0].dir ].ny ]
-		 = theFront;
+	for(var i = 0; i < reverse.length; i++){
+		for(var j = 1; j <= reverse[i].count; j++){
+			tableStatus
+			[ x + j * direction[ reverse[i].dir ].nx ]
+			[ y + j * direction[ reverse[i].dir ].ny ]
+			 = theFront;
+		 }
 	}
-		console.log(tableStatus.join("\n"));
 	return tableStatus;
 }
 
