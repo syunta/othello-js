@@ -15,33 +15,36 @@ function makeRoot(){
 	
 	var phase = "●";
 	var root = othelloTable.status;
+	var depth = 4;
 	
-	makeBranch(root,phase);
+	makeBranch(root,phase,depth);
 }
 
-function makeBranch(node,phase){
+function makeBranch(node,phase,depth){
 	
 	var branch = listPossiblePositions(node,phase);
 	
-	if( branch.length != 0 ){
+	if( branch.length != 0 && 0 < depth){
 		
 		for(var i = 0; i < branch.length; i++){
-			makeNode(cloneArray(node),branch[i].x,branch[i].y,phase);
+			makeNode(cloneArray(node),branch[i].x,branch[i].y,phase,depth);
 		}
 		
 	}else{
 		/* なにもしない */
+		console.log(node.join("\n"));
 	}
 }
 
-function makeNode(parentNode,x,y,phase){
+function makeNode(parentNode,x,y,phase,depth){
 	var newNode = put(parentNode,x,y,phase);
 	reverse(newNode,x,y,phase);
 	
 	var nextPhase = changePhase(phase);
 	
-	console.log(nextPhase,phase);
-//	makeBranch(newNode,nextPhase);
+	depth -= 1;
+	
+	makeBranch(newNode,nextPhase,depth);
 }
 
 /* 石を置く */
@@ -79,7 +82,6 @@ function reverse(tableStatus,x,y,phase){
 	}
 	return tableStatus;
 }
-
 
 /* 盤が空いているか判定 */
 function checkPlacement(tableStatus,x,y){
