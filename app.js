@@ -1,5 +1,5 @@
 //////////////////////変数を定義//////////////////////
-var othelloTable = new othelloTable();
+var table = new othelloTable();
 var direction = [
 	{nx: 0,ny:-1},
 	{nx: 1,ny:-1},
@@ -14,29 +14,37 @@ var direction = [
 function makeRoot(){
 	
 	var phase = "●";
-	var root = othelloTable.status;
-	var depth = 4;
+	var root = table.status;
+	var depth = 200;
+	var passCnt = 0;
 	
-	makeBranch(root,phase,depth);
+	makeBranch(root,phase,depth,passCnt);
 }
 
-function makeBranch(node,phase,depth){
+function makeBranch(node,phase,depth,passCnt){
 	
-	var branch = listPossiblePositions(node,phase);
-	
-	if( branch.length != 0 && 0 < depth){
+	if(passCnt < 2 && 0 < depth){
+		var branch = listPossiblePositions(node,phase);
 		
-		for(var i = 0; i < branch.length; i++){
-			makeNode(cloneArray(node),branch[i].x,branch[i].y,phase,depth);
+		if( branch.length != 0){
+			passCnt = 0;
+			for(var i = 0; i < branch.length; i++){
+				makeNode(cloneArray(node),branch[i].x,branch[i].y,phase,depth,passCnt);
+			}
+		}else{
+			/* パス */
+			var nextPhase = changePhase(phase);
+			depth -= 1;
+			passCnt += 1;
+			makeBranch(node,nextPhase,depth,passCnt)
 		}
-		
 	}else{
-		/* なにもしない */
+		/* リーフを出力 */
 		console.log(node.join("\n"));
 	}
 }
 
-function makeNode(parentNode,x,y,phase,depth){
+function makeNode(parentNode,x,y,phase,depth,passCnt){
 	var newNode = put(parentNode,x,y,phase);
 	reverse(newNode,x,y,phase);
 	
@@ -44,7 +52,7 @@ function makeNode(parentNode,x,y,phase,depth){
 	
 	depth -= 1;
 	
-	makeBranch(newNode,nextPhase,depth);
+	makeBranch(newNode,nextPhase,depth,passCnt);
 }
 
 /* 石を置く */
@@ -150,9 +158,9 @@ function othelloTable(){
 	this.status = [
 		["■","■","■","■","■","■"],
 		["■"," "," "," "," ","■"],
-		["■"," ","○","●"," ","■"],
+		["■"," ","●","●"," ","■"],
 		["■"," ","●","○"," ","■"],
-		["■"," "," "," "," ","■"],
+		["■","●","○"," "," ","■"],
 		["■","■","■","■","■","■"]
 	];
 }
