@@ -38,8 +38,10 @@ function makeNode(parentNode,x,y,phase){
 	var newNode = put(parentNode,x,y,phase);
 	reverse(newNode,x,y,phase);
 	
-	console.log(newNode.join("\n"));
-//	makeBranch(newNode,phase);
+	var nextPhase = changePhase(phase);
+	
+	console.log(nextPhase,phase);
+//	makeBranch(newNode,nextPhase);
 }
 
 /* 石を置く */
@@ -131,6 +133,14 @@ function countReverse(tableStatus,x,y,phase){
 	return result;
 }
 
+function changePhase(phase){
+	if(phase == "●"){
+		var nextPhase = "○";
+	}else if(phase == "○"){
+		var nextPhase = "●";
+	}
+	return nextPhase;
+}
 //////////////////////オブジェクトを定義//////////////////////
 /* オセロ盤 */
 
