@@ -1,9 +1,9 @@
 //////////////////////HTML描画//////////////////////
 function drawTable(){
-	var text ="";
+	var text = "";
 
-	for(var y = 1; y <= 4; y++){
-		for(var x = 1; x <= 4; x++){
+	for(var y = 1; y <= tableArea; y++){
+		for(var x = 1; x <= tableArea; x++){
 			if(x != 1){
 				text +="<div onclick='phaseAction("+x+","+y+")'>" + table.status[x][y] + "</div>";
 			}else{
@@ -35,10 +35,6 @@ var direction = [
 var tableArea = 8;
 var table = new othelloTable();
 
-function test(){
-	console.log(table.status.join("\n"));
-}
-
 function othelloTable(){
 	
 	var defaultStatus = [];
@@ -66,15 +62,6 @@ function othelloTable(){
 	
 	
 	this.status = defaultStatus;
-	
-//	this.status = [
-//		["■","■","■","■","■","■"],
-//		["■"," "," "," "," ","■"],
-//		["■"," ","○","●"," ","■"],
-//		["■"," ","●","○"," ","■"],
-//		["■"," "," "," "," ","■"],
-//		["■","■","■","■","■","■"]
-//	];
 }
 
 /* AI */
@@ -134,6 +121,7 @@ function phaseAction(x,y){
 
 	if(passCount == 1){
 		gamePhase = changePhase(gamePhase);
+		showPhase();
 		/* AIの手番 */
 //		setTimeout(aiAction,1000);
 	}else if(checkPlacement(table.status,x,y) && countReverse(table.status,x,y,gamePhase).length != 0){
@@ -141,11 +129,13 @@ function phaseAction(x,y){
 		reverse(table.status,x,y,gamePhase);
 		gamePhase = changePhase(gamePhase);
 		drawTable();
+		showPhase(gamePhase);
 		
 		/* AIの手番 */
 //		setTimeout(aiAction,1000);
 	}else{
-		alert("石を置けません");
+		showWarning();
+		setTimeout(erase,800);
 	}
 }
 
@@ -183,6 +173,26 @@ function aiAction(){
 function gameOver(){
 	alert("ゲームセット！！");
 }
+/* 警告メッセージを表示 */
+function showWarning(){
+	document.getElementById("message").innerHTML 
+			+= "<h1>石を置けません</h1>";
+}
+
+/* 手番を表示 */
+function showPhase(phase){
+	if(phase == "●"){
+		document.getElementById("phase").innerHTML = "<h1>黒の番です</h1>";
+	}else if(phase == "○"){
+		document.getElementById("phase").innerHTML = "<h1>白の番です</h1>";
+	}
+}
+/* メッセージを消す */
+function erase(){
+	document.getElementById("message").innerHTML 
+		= "";
+}
+
 //////////////////////ツリーを生成//////////////////////
 function makeRoot(){
 	
@@ -327,13 +337,13 @@ function changePhase(phase){
 	return nextPhase;
 }
 
-//////////////////////関数ライブラリ//////////////////////
+//////////////////////よく使う処理//////////////////////
 /* 盤面の状態を見て置けるところを返す */
 function listPossiblePositions(tableStatus,phase){
 	var positions = [];
 	
-	for(var y = 1; y <= 4; y++){
-		for(var x = 1; x <= 4; x++){
+	for(var y = 1; y <= tableArea; y++){
+		for(var x = 1; x <= tableArea; x++){
 			if( checkPlacement(tableStatus,x,y) ){
 				if( countReverse(tableStatus,x,y,phase).length != 0 ){
 					positions.push({x:x,y:y});

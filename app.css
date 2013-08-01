@@ -2,6 +2,10 @@
 	margin:0px;
 	padding:0px;
 }
+main{
+	width:50%;
+	margin:30px auto 0;
+}
 div{
 	width:60px;
 	height:60px;
