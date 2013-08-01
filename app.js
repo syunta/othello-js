@@ -15,12 +15,8 @@ function drawTable(){
 
 	document.getElementById("othelloTable").innerHTML = text;
 }
-
-function test(x,y){
-	console.log(x,y);
-}
 //////////////////////変数を定義//////////////////////
-var table = new othelloTable();
+
 var ai = new AI();
 var gamePhase = "●";
 var passCount = 0;
@@ -36,16 +32,49 @@ var direction = [
 ];
 //////////////////////オブジェクトを定義//////////////////////
 /* オセロ盤 */
+var tableArea = 8;
+var table = new othelloTable();
+
+function test(){
+	console.log(table.status.join("\n"));
+}
 
 function othelloTable(){
-	this.status = [
-		["■","■","■","■","■","■"],
-		["■"," "," "," "," ","■"],
-		["■"," ","○","●"," ","■"],
-		["■"," ","●","○"," ","■"],
-		["■"," "," "," "," ","■"],
-		["■","■","■","■","■","■"]
-	];
+	
+	var defaultStatus = [];
+	
+	for(var y = 0; y <= tableArea+1; y++){
+		defaultStatus[y] = [];
+	}
+
+	for(var y = 0; y <= tableArea+1; y++){
+		for(var x = 0; x <= tableArea+1; x++){
+			if(y == 0 || x == 0){
+				defaultStatus[y][x] = "■";
+			}else if(y == tableArea+1 || x == tableArea+1){
+				defaultStatus[y][x] = "■";
+			}else{
+				defaultStatus[y][x] = " ";
+			}
+		}
+	}
+	var pos = tableArea/2;
+	defaultStatus[pos+1][pos+1] = "○";
+	defaultStatus[pos][pos] = "○";
+	defaultStatus[pos][pos+1] = "●";
+	defaultStatus[pos+1][pos] = "●";
+	
+	
+	this.status = defaultStatus;
+	
+//	this.status = [
+//		["■","■","■","■","■","■"],
+//		["■"," "," "," "," ","■"],
+//		["■"," ","○","●"," ","■"],
+//		["■"," ","●","○"," ","■"],
+//		["■"," "," "," "," ","■"],
+//		["■","■","■","■","■","■"]
+//	];
 }
 
 /* AI */
@@ -198,6 +227,7 @@ function makeNode(parentNode,x,y,phase,depth,passCnt){
 	depth -= 1;
 	
 	makeBranch(newNode,nextPhase,depth,passCnt);
+	
 }
 
 /* 石を置く */
