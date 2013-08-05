@@ -16,7 +16,8 @@ function drawTable(){
 	document.getElementById("othelloTable").innerHTML = text;
 }
 //////////////////////変数を定義//////////////////////
-
+var tableArea = 8;
+var table = new othelloTable();
 var ai = new AI();
 var gamePhase = "●";
 var passCount = 0;
@@ -32,25 +33,22 @@ var direction = [
 ];
 //////////////////////オブジェクトを定義//////////////////////
 /* オセロ盤 */
-var tableArea = 8;
-var table = new othelloTable();
-
 function othelloTable(){
 	
 	var defaultStatus = [];
 	
-	for(var y = 0; y <= tableArea+1; y++){
-		defaultStatus[y] = [];
+	for(var x = 0; x <= tableArea+1; x++){
+		defaultStatus[x] = [];
 	}
 
 	for(var y = 0; y <= tableArea+1; y++){
 		for(var x = 0; x <= tableArea+1; x++){
 			if(y == 0 || x == 0){
-				defaultStatus[y][x] = "■";
+				defaultStatus[x][y] = "■";
 			}else if(y == tableArea+1 || x == tableArea+1){
-				defaultStatus[y][x] = "■";
+				defaultStatus[x][y] = "■";
 			}else{
-				defaultStatus[y][x] = " ";
+				defaultStatus[x][y] = " ";
 			}
 		}
 	}
@@ -65,16 +63,42 @@ function othelloTable(){
 }
 
 /* AI */
+function test(){
+	console.log(ai.scoreTable.join("\n"));
+}
+
 function AI(){
 	/* スコアテーブル */
-	this.scoreTable = [
-		[-1,-1,-1,-1,-1,-1],
-		[-1, 9, 0, 0, 9,-1],
-		[-1, 0, 1, 1, 0,-1],
-		[-1, 0, 1, 1, 0,-1],
-		[-1, 9, 0, 0, 9,-1],
-		[-1,-1,-1,-1,-1,-1]
-	];
+	var score = [];
+	
+	for(var x = 0; x <= tableArea+1; x++){
+		score[x] = [];
+	}
+	
+	for(var y = 0; y <= tableArea+1; y++){
+		for(var x = 0; x <= tableArea+1; x++){
+			if(y == 0 || x == 0){
+				score[x][y] = "■";
+			}else if(y == tableArea+1 || x == tableArea+1){
+				score[x][y] = "■";
+			}else if(x == 1 || y == tableArea){
+				score[x][y] = 9;
+			}else{
+				score[x][y] = 0;
+			}
+		}
+	}
+	
+	this.scoreTable = score;
+	
+//	[9,0,1,1,1,1,0,9],
+//	[0,0,2,2,2,2,0,0],
+//	[1,2,3,3,3,3,2,1],
+//	[1,2,3,4,4,3,2,1],
+//	[1,2,3,4,4,3,2,1],
+//	[1,2,3,3,3,3.2,1],
+//	[0,0,2,2,2,2,0,0],
+//	[9,0,1,1,1,1,0,9]
 
 	/* 置ける場所の記憶 */
 	this.memory = [];
@@ -166,7 +190,6 @@ function aiAction(){
 	if(gameEndFlag){
 		gameOver();
 	}
-
 }
 
 /* ゲーム終了 */
@@ -178,7 +201,6 @@ function showWarning(){
 	document.getElementById("message").innerHTML 
 			+= "<h1>石を置けません</h1>";
 }
-
 /* 手番を表示 */
 function showPhase(phase){
 	if(phase == "●"){
@@ -199,7 +221,7 @@ function makeRoot(){
 	var phase = "●";
 	var root = cloneArray(table.status);
 	
-	var depth = 1;
+	var depth = 4;
 	var passCnt = 0;
 	
 	makeBranch(root,phase,depth,passCnt);
@@ -215,8 +237,9 @@ function makeBranch(node,phase,depth,passCnt){
 			for(var i = 0; i < branch.length; i++){
 				makeNode(cloneArray(node),branch[i].x,branch[i].y,phase,depth,passCnt);
 			}
+			
 		}else{
-			/* パス */
+			/* パスが発生した場合 */
 			var nextPhase = changePhase(phase);
 			depth -= 1;
 			passCnt += 1;
