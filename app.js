@@ -164,15 +164,16 @@ function phaseAction(x,y){
 		drawTable();
 		
 		/* AIの手番 */
+		showMessage("(AIターン)");
 		setTimeout(aiAction,1000);
 	}else{
-		showWarning();
+		showMessage("石を置けません");
 		setTimeout(erase,800);
 	}
 }
 
 function aiAction(){
-	
+	showMessage("AIターン");
 	
 	var gameEndFlag = true;
 	var selectedPosition = {};
@@ -189,7 +190,8 @@ function aiAction(){
 	gamePhase = changePhase(gamePhase);
 	showPhase(gamePhase);
 	drawTable();
-
+	erase();
+	
 	if(passCount == 2){
 		gameOver();
 	}
@@ -208,9 +210,9 @@ function gameOver(){
 	alert("ゲームセット！！");
 }
 /* 警告メッセージを表示 */
-function showWarning(){
+function showMessage(messege){
 	document.getElementById("message").innerHTML 
-			+= "<h1>石を置けません</h1>";
+			+= "<h1>"+messege+"</h1>";
 }
 /* 手番を表示 */
 function showPhase(phase){
