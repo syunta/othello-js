@@ -52,7 +52,7 @@ function othelloTable(){
 			}
 		}
 	}
-	var pos = tableArea/2;
+	var pos = Math.floor(tableArea/2);
 	defaultStatus[pos+1][pos+1] = "○";
 	defaultStatus[pos][pos] = "○";
 	defaultStatus[pos][pos+1] = "●";
@@ -69,36 +69,49 @@ function test(){
 
 function AI(){
 	/* スコアテーブル */
-	var score = [];
+	var scoreTable = [];
 	
 	for(var x = 0; x <= tableArea+1; x++){
-		score[x] = [];
+		scoreTable[x] = [];
 	}
 	
 	for(var y = 0; y <= tableArea+1; y++){
 		for(var x = 0; x <= tableArea+1; x++){
 			if(y == 0 || x == 0){
-				score[x][y] = "■";
+				scoreTable[x][y] = "■";
 			}else if(y == tableArea+1 || x == tableArea+1){
-				score[x][y] = "■";
-			}else if(x == 1 || y == tableArea){
-				score[x][y] = 9;
-			}else{
-				score[x][y] = 0;
+				scoreTable[x][y] = "■";
 			}
 		}
 	}
 	
-	this.scoreTable = score;
+	for(var i = 1; i <= tableArea-Math.floor(tableArea/2); i++){
+		for(var y = i; y <= tableArea+1-i; y++){
+			for(var x = i; x <= tableArea+1-i; x++){
+				if(x==i || y==i || x==tableArea+1-i || y==tableArea+1-i){
+					scoreTable[x][y] = i;
+				}
+			}
+		}
+	}
 	
-//	[9,0,1,1,1,1,0,9],
-//	[0,0,2,2,2,2,0,0],
-//	[1,2,3,3,3,3,2,1],
-//	[1,2,3,4,4,3,2,1],
-//	[1,2,3,4,4,3,2,1],
-//	[1,2,3,3,3,3.2,1],
-//	[0,0,2,2,2,2,0,0],
-//	[9,0,1,1,1,1,0,9]
+	for(var i = 0; i < tableArea; i += tableArea-2){
+		for(var j = 0; j < tableArea; j += tableArea-2){
+			for(var y = 1; y <= 2; y++){
+				for(var x = 1; x <= 2; x++){
+					scoreTable[x+i][y+j] = 0;
+				}
+			}
+		}
+	}
+	
+	for(var y = 1; y <= tableArea; y += tableArea-1){
+		for(var x = 1; x <= tableArea; x += tableArea-1){
+			scoreTable[x][y] = 9;
+		}
+	}
+	
+	this.scoreTable = scoreTable;
 
 	/* 置ける場所の記憶 */
 	this.memory = [];
