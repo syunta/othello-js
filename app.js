@@ -63,10 +63,6 @@ function othelloTable(){
 }
 
 /* AI */
-function test(){
-	console.log(ai.scoreTable.join("\n"));
-}
-
 function AI(){
 	/* スコアテーブル */
 	var scoreTable = [];
@@ -117,9 +113,9 @@ function AI(){
 	this.memory = [];
 
 	/* 石を置ける場所を網羅検索 */
-	this.search = function(){
+	this.search = function(tableStatus,phase){
 
-		this.memory = listPossiblePositions();
+		this.memory = listPossiblePositions(tableStatus,phase);
 
 	}
 
@@ -135,10 +131,9 @@ function AI(){
 				highScore = this.scoreTable[this.memory[i].x][this.memory[i].y];
 			}
 		}
-
-		var position = {x:selection.x,y:selection.y};
-		console.log(position);
-		return position;
+		
+		console.log(selection);
+		return selection;
 	}
 	/* 忘れる */
 	this.forget = function(){
@@ -160,16 +155,16 @@ function phaseAction(x,y){
 		gamePhase = changePhase(gamePhase);
 		showPhase();
 		/* AIの手番 */
-//		setTimeout(aiAction,1000);
+		setTimeout(aiAction,1000);
 	}else if(checkPlacement(table.status,x,y) && countReverse(table.status,x,y,gamePhase).length != 0){
 		put(table.status,x,y,gamePhase);
 		reverse(table.status,x,y,gamePhase);
 		gamePhase = changePhase(gamePhase);
-		drawTable();
 		showPhase(gamePhase);
+		drawTable();
 		
 		/* AIの手番 */
-//		setTimeout(aiAction,1000);
+		setTimeout(aiAction,1000);
 	}else{
 		showWarning();
 		setTimeout(erase,800);
@@ -177,26 +172,29 @@ function phaseAction(x,y){
 }
 
 function aiAction(){
+	
+	
 	var gameEndFlag = true;
 	var selectedPosition = {};
 
-	ai.search();
+	ai.search(table.status,gamePhase);
 	selectedPosition = ai.select();
 	if(ai.memory.length != 0){
-		put(selectedPosition.x,selectedPosition.y);
-		reverse(selectedPosition.x,selectedPosition.y);
+		put(table.status,selectedPosition.x,selectedPosition.y,gamePhase);
+		reverse(table.status,selectedPosition.x,selectedPosition.y,gamePhase);
 	}else{
 		passCount += 1;
 	}
 	ai.forget();
-	phaseChange();
+	gamePhase = changePhase(gamePhase);
+	showPhase(gamePhase);
 	drawTable();
 
 	if(passCount == 2){
 		gameOver();
 	}
 
-	if(listPossiblePositions().length != 0){
+	if(listPossiblePositions(table.status,gamePhase).length != 0){
 		gameEndFlag = false;
 	}
 
