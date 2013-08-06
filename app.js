@@ -207,9 +207,24 @@ function aiAction(){
 
 /* ゲーム終了 */
 function gameOver(){
-	alert("ゲームセット！！");
+	var countBlack = 0;
+	var countWhite = 0;
+	
+	for(var y = 1; y <= tableArea; y++){
+		for(var x = 1; x <= tableArea; x++){
+			if(table.status[x][y]=="●"){
+				countBlack += 1;
+			}
+			else if(table.status[x][y]=="○")
+			{
+				countWhite += 1;
+			}
+		}
+	}
+	showPhase("ゲームセット");
+	showMessage("黒:"+countBlack+"<br>白:"+countWhite);
 }
-/* 警告メッセージを表示 */
+/* メッセージを表示 */
 function showMessage(messege){
 	document.getElementById("message").innerHTML 
 			+= "<h1>"+messege+"</h1>";
@@ -220,6 +235,8 @@ function showPhase(phase){
 		document.getElementById("phase").innerHTML = "<h1>黒の番です</h1>";
 	}else if(phase == "○"){
 		document.getElementById("phase").innerHTML = "<h1>白の番です</h1>";
+	}else{
+		document.getElementById("phase").innerHTML = "<h1>"+phase+"</h1>";
 	}
 }
 /* メッセージを消す */
