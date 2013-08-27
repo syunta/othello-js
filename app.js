@@ -135,6 +135,20 @@ function AI(){
 		console.log(selection);
 		return selection;
 	}
+	
+	/* スコアを計算する */
+	this.calculateScore = function(tableStatus){
+		var score = 0;
+		for(var y = 1; y <= tableArea; y++){
+			for(var x = 1; x <= tableArea; x++){
+				if(tableStatus[x][y] == "○"){
+					score += this.scoreTable[x][y];
+				}
+			}
+		}
+		return score;
+	}
+	
 	/* 忘れる */
 	this.forget = function(){
 		this.memory.splice(0,this.memory.length);
@@ -310,20 +324,6 @@ function makeNode(parentNode,x,y,phase,depth,passCnt,nodeList){
 	makeBranch(newNode,nextPhase,depth,passCnt,nodeList);
 }
 
-function calculateScore(tableStatus){
-	
-	var score = 0;
-	for(var y = 1; y <= tableArea; y++){
-		for(var x = 1; x <= tableArea; x++){
-			if(tableStatus[x][y] == "○"){
-				score += ai.scoreTable[x][y];
-			}
-		}
-	}
-	
-	console.log(tableStatus.join("\n"));
-	console.log(score);
-}
 /* 石を置く */
 function put(tableStatus,x,y,phase){
 	
