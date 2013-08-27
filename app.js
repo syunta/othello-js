@@ -251,6 +251,7 @@ function makeRoot(tableStatus){
 	var phase = "●";
 	var depth = 4;
 	var passCnt = 0;
+	var nodeList = [];
 	
 	var putStoneChoises = listPossiblePositions(tableStatus,phase);
 	
@@ -265,12 +266,15 @@ function makeRoot(tableStatus){
 			putStoneChoises[i].y,
 			phase,
 			depth,
-			passCnt
+			passCnt,
+			nodeList
 		);
 	}
+	
+	return console.log(nodeList.join("\n"));
 }
 
-function makeBranch(node,phase,depth,passCnt){
+function makeBranch(node,phase,depth,passCnt,nodeList){
 	
 	if(passCnt < 2 && 0 < depth){
 		var branch = listPossiblePositions(node,phase);
@@ -278,7 +282,7 @@ function makeBranch(node,phase,depth,passCnt){
 		if( branch.length != 0){
 			passCnt = 0;
 			for(var i = 0; i < branch.length; i++){
-				makeNode(cloneArray(node),branch[i].x,branch[i].y,phase,depth,passCnt);
+				makeNode(cloneArray(node),branch[i].x,branch[i].y,phase,depth,passCnt,nodeList);
 			}
 			
 		}else{
@@ -286,16 +290,16 @@ function makeBranch(node,phase,depth,passCnt){
 			var nextPhase = changePhase(phase);
 			depth -= 1;
 			passCnt += 1;
-			makeBranch(node,nextPhase,depth,passCnt);
+			makeBranch(node,nextPhase,depth,passCnt,nodeList);
 		}
 	
 	}else{
 		/* リーフを出力 */
-		return calculateScore(node);
+		return nodeList.push(node);
 	}
 }
 
-function makeNode(parentNode,x,y,phase,depth,passCnt){
+function makeNode(parentNode,x,y,phase,depth,passCnt,nodeList){
 	var newNode = put(parentNode,x,y,phase);
 	reverse(newNode,x,y,phase);
 	
@@ -303,7 +307,7 @@ function makeNode(parentNode,x,y,phase,depth,passCnt){
 	
 	depth -= 1;
 	
-	makeBranch(newNode,nextPhase,depth,passCnt);
+	makeBranch(newNode,nextPhase,depth,passCnt,nodeList);
 }
 
 function calculateScore(tableStatus){
@@ -320,7 +324,6 @@ function calculateScore(tableStatus){
 	console.log(tableStatus.join("\n"));
 	console.log(score);
 }
-
 /* 石を置く */
 function put(tableStatus,x,y,phase){
 	
