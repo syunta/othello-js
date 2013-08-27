@@ -246,15 +246,28 @@ function erase(){
 }
 
 //////////////////////ツリーを生成//////////////////////
-function makeRoot(){
+function makeRoot(tableStatus){
 	
 	var phase = "●";
-	var root = cloneArray(table.status);
-	
 	var depth = 4;
 	var passCnt = 0;
 	
-	makeBranch(root,phase,depth,passCnt);
+	var putStoneChoises = listPossiblePositions(tableStatus,phase);
+	
+	for(var i = 0; i < putStoneChoises.length; i++){
+		/* 最初に置いた石の位置を保存 */
+		var root = cloneArray(tableStatus);
+		root.push([putStoneChoises[i].x,putStoneChoises[i].y]);
+		
+		makeNode(
+			cloneArray(root),
+			putStoneChoises[i].x,
+			putStoneChoises[i].y,
+			phase,
+			depth,
+			passCnt
+		);
+	}
 }
 
 function makeBranch(node,phase,depth,passCnt){
@@ -273,11 +286,12 @@ function makeBranch(node,phase,depth,passCnt){
 			var nextPhase = changePhase(phase);
 			depth -= 1;
 			passCnt += 1;
-			makeBranch(node,nextPhase,depth,passCnt)
+			makeBranch(node,nextPhase,depth,passCnt);
 		}
+	
 	}else{
 		/* リーフを出力 */
-		console.log(node.join("\n"));
+		return console.log(node.join("\n"));
 	}
 }
 
@@ -290,7 +304,6 @@ function makeNode(parentNode,x,y,phase,depth,passCnt){
 	depth -= 1;
 	
 	makeBranch(newNode,nextPhase,depth,passCnt);
-	
 }
 
 /* 石を置く */
@@ -375,7 +388,6 @@ function countReverse(tableStatus,x,y,phase){
 			{
 				break;
 			}
-			
 		}
 	}
 	return result;

@@ -14,7 +14,6 @@ div{
 	text-align:center;
 	line-height:60px;
 	font-size:60px;
-	background:green;
 }
 div:hover{
 	background:yellow;
