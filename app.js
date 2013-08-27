@@ -291,7 +291,7 @@ function makeBranch(node,phase,depth,passCnt){
 	
 	}else{
 		/* リーフを出力 */
-		return console.log(node.join("\n"));
+		return calculateScore(node);
 	}
 }
 
@@ -304,6 +304,21 @@ function makeNode(parentNode,x,y,phase,depth,passCnt){
 	depth -= 1;
 	
 	makeBranch(newNode,nextPhase,depth,passCnt);
+}
+
+function calculateScore(tableStatus){
+	
+	var score = 0;
+	for(var y = 1; y <= tableArea; y++){
+		for(var x = 1; x <= tableArea; x++){
+			if(tableStatus[x][y] == "○"){
+				score += ai.scoreTable[x][y];
+			}
+		}
+	}
+	
+	console.log(tableStatus.join("\n"));
+	console.log(score);
 }
 
 /* 石を置く */
