@@ -122,6 +122,9 @@ function AI(){
 	
 	/* スコアを計算する */
 	this.calculateScore = function(tableStatus,phase){
+		
+//		console.log(tableStatus.join("\n"));
+		
 		var score = 0;
 		for(var y = 1; y <= TABLE_AREA; y++){
 			for(var x = 1; x <= TABLE_AREA; x++){
@@ -131,23 +134,6 @@ function AI(){
 			}
 		}
 		return score;
-	}
-	
-	/* 手を選ぶ */
-	this.select = function(){
-
-		var selection ={};
-		var highScore = 0;
-
-		for(var i = 0; i < this.memory.length; i++){
-			if(highScore <= this.scoreTable[this.memory[i].x][this.memory[i].y]){
-				selection = {x:this.memory[i].x,y:this.memory[i].y};
-				highScore = this.scoreTable[this.memory[i].x][this.memory[i].y];
-			}
-		}
-		
-		console.log(selection);
-		return selection;
 	}
 	
 	/* 忘れる */
@@ -194,23 +180,18 @@ function aiAction(){
 	
 	ai.search(table.status,gamePhase);
 	
-	console.log(ai.memory.join("\n"));
-	console.log(ai.memory.length);
-	
 	var maxScore = 0;
-	var selectedPosition = [];
+	var selectedPosition = {};
 	var currentScore = 0;
-	for(var i = 0; ai.memory.length; i++){
+	for(var i = 0; i < ai.memory.length; i++){
 		currentScore = ai.calculateScore(ai.memory[i],gamePhase);
 		if(maxScore < currentScore){
 			maxScore = currentScore;
-			selectedPosition = ai.memory[i][TABLE_AREA+2];
+			selectedPosition.x = ai.memory[i][TABLE_AREA+2][0];
+			selectedPosition.y = ai.memory[i][TABLE_AREA+2][1];
 		}
-		console.log(maxScore);
-		console.log(selectedPosition);
 	}
 	
-	selectedPosition = ai.select();
 	if(ai.memory.length != 0){
 		put(table.status,selectedPosition.x,selectedPosition.y,gamePhase);
 		reverse(table.status,selectedPosition.x,selectedPosition.y,gamePhase);
