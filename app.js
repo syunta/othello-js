@@ -96,7 +96,7 @@ function AI(){
 		for(var j = 0; j < TABLE_AREA; j += TABLE_AREA-2){
 			for(var y = 1; y <= 2; y++){
 				for(var x = 1; x <= 2; x++){
-					scoreTable[x+i][y+j] = 0;
+					scoreTable[x+i][y+j] = -5;
 				}
 			}
 		}
@@ -104,7 +104,7 @@ function AI(){
 	
 	for(var y = 1; y <= TABLE_AREA; y += TABLE_AREA-1){
 		for(var x = 1; x <= TABLE_AREA; x += TABLE_AREA-1){
-			scoreTable[x][y] = 9;
+			scoreTable[x][y] = 10;
 		}
 	}
 	
