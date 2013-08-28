@@ -115,11 +115,24 @@ function AI(){
 
 	/* 石を置ける場所を網羅検索 */
 	this.search = function(tableStatus,phase){
-
-		this.memory = listPossiblePositions(tableStatus,phase);
-
+	
+		this.memory = makeTreeAndReturnLeaf(tableStatus,phase);
+	
 	}
-
+	
+	/* スコアを計算する */
+	this.calculateScore = function(tableStatus,phase){
+		var score = 0;
+		for(var y = 1; y <= TABLE_AREA; y++){
+			for(var x = 1; x <= TABLE_AREA; x++){
+				if(tableStatus[x][y] == phase){
+					score += this.scoreTable[x][y];
+				}
+			}
+		}
+		return score;
+	}
+	
 	/* 手を選ぶ */
 	this.select = function(){
 
@@ -135,19 +148,6 @@ function AI(){
 		
 		console.log(selection);
 		return selection;
-	}
-	
-	/* スコアを計算する */
-	this.calculateScore = function(tableStatus,phase){
-		var score = 0;
-		for(var y = 1; y <= TABLE_AREA; y++){
-			for(var x = 1; x <= TABLE_AREA; x++){
-				if(tableStatus[x][y] == phase){
-					score += this.scoreTable[x][y];
-				}
-			}
-		}
-		return score;
 	}
 	
 	/* 忘れる */
@@ -191,9 +191,25 @@ function aiAction(){
 	showMessage("AIターン");
 	
 	var gameEndFlag = true;
-	var selectedPosition = {};
-
+	
 	ai.search(table.status,gamePhase);
+	
+	console.log(ai.memory.join("\n"));
+	console.log(ai.memory.length);
+	
+	var maxScore = 0;
+	var selectedPosition = [];
+	var currentScore = 0;
+	for(var i = 0; ai.memory.length; i++){
+		currentScore = ai.calculateScore(ai.memory[i],gamePhase);
+		if(maxScore < currentScore){
+			maxScore = currentScore;
+			selectedPosition = ai.memory[i][TABLE_AREA+2];
+		}
+		console.log(maxScore);
+		console.log(selectedPosition);
+	}
+	
 	selectedPosition = ai.select();
 	if(ai.memory.length != 0){
 		put(table.status,selectedPosition.x,selectedPosition.y,gamePhase);
@@ -285,7 +301,7 @@ function makeTreeAndReturnLeaf(tableStatus,phase){
 		);
 	}
 	
-	return console.log(leafList.join("\n"));
+	return leafList;
 }
 
 function makeBranch(node,phase,depth,passCnt,leafList){
