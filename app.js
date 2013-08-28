@@ -14,7 +14,7 @@ function drawTable(){
 		}
 		text += "<br>";
 	}
-
+	
 	document.getElementById("othelloTable").innerHTML = text;
 }
 //////////////////////変数を定義//////////////////////
