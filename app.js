@@ -261,9 +261,8 @@ function erase(){
 }
 
 //////////////////////ツリーを生成//////////////////////
-function makeTreeAndReturnLeaf(tableStatus){
+function makeTreeAndReturnLeaf(tableStatus,phase){
 	
-	var phase = "●";
 	var depth = 4;
 	var passCnt = 0;
 	var leafList = [];
