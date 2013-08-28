@@ -260,12 +260,12 @@ function erase(){
 }
 
 //////////////////////ツリーを生成//////////////////////
-function makeRoot(tableStatus){
+function makeTreeAndReturnLeaf(tableStatus){
 	
 	var phase = "●";
 	var depth = 4;
 	var passCnt = 0;
-	var nodeList = [];
+	var leafList = [];
 	
 	var putStoneChoises = listPossiblePositions(tableStatus,phase);
 	
@@ -281,14 +281,14 @@ function makeRoot(tableStatus){
 			phase,
 			depth,
 			passCnt,
-			nodeList
+			leafList
 		);
 	}
 	
-	return console.log(nodeList.join("\n"));
+	return console.log(leafList.join("\n"));
 }
 
-function makeBranch(node,phase,depth,passCnt,nodeList){
+function makeBranch(node,phase,depth,passCnt,leafList){
 	
 	if(passCnt < 2 && 0 < depth){
 		var branch = listPossiblePositions(node,phase);
@@ -296,7 +296,7 @@ function makeBranch(node,phase,depth,passCnt,nodeList){
 		if( branch.length != 0){
 			passCnt = 0;
 			for(var i = 0; i < branch.length; i++){
-				makeNode(cloneArray(node),branch[i].x,branch[i].y,phase,depth,passCnt,nodeList);
+				makeNode(cloneArray(node),branch[i].x,branch[i].y,phase,depth,passCnt,leafList);
 			}
 			
 		}else{
@@ -304,16 +304,16 @@ function makeBranch(node,phase,depth,passCnt,nodeList){
 			var nextPhase = changePhase(phase);
 			depth -= 1;
 			passCnt += 1;
-			makeBranch(node,nextPhase,depth,passCnt,nodeList);
+			makeBranch(node,nextPhase,depth,passCnt,leafList);
 		}
 	
 	}else{
 		/* リーフを出力 */
-		return nodeList.push(node);
+		return leafList.push(node);
 	}
 }
 
-function makeNode(parentNode,x,y,phase,depth,passCnt,nodeList){
+function makeNode(parentNode,x,y,phase,depth,passCnt,leafList){
 	var newNode = put(parentNode,x,y,phase);
 	reverse(newNode,x,y,phase);
 	
@@ -321,7 +321,7 @@ function makeNode(parentNode,x,y,phase,depth,passCnt,nodeList){
 	
 	depth -= 1;
 	
-	makeBranch(newNode,nextPhase,depth,passCnt,nodeList);
+	makeBranch(newNode,nextPhase,depth,passCnt,leafList);
 }
 
 /* 石を置く */
