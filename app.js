@@ -1,9 +1,11 @@
+const TABLE_AREA = 8;
+
 //////////////////////HTML描画//////////////////////
 function drawTable(){
 	var text = "";
 
-	for(var y = 1; y <= tableArea; y++){
-		for(var x = 1; x <= tableArea; x++){
+	for(var y = 1; y <= TABLE_AREA; y++){
+		for(var x = 1; x <= TABLE_AREA; x++){
 			if(x != 1){
 				text +="<div onclick='phaseAction("+x+","+y+")'>" + table.status[x][y] + "</div>";
 			}else{
@@ -16,7 +18,6 @@ function drawTable(){
 	document.getElementById("othelloTable").innerHTML = text;
 }
 //////////////////////変数を定義//////////////////////
-var tableArea = 8;
 var table = new othelloTable();
 var ai = new AI();
 var gamePhase = "●";
@@ -37,22 +38,22 @@ function othelloTable(){
 	
 	var defaultStatus = [];
 	
-	for(var x = 0; x <= tableArea+1; x++){
+	for(var x = 0; x <= TABLE_AREA+1; x++){
 		defaultStatus[x] = [];
 	}
 
-	for(var y = 0; y <= tableArea+1; y++){
-		for(var x = 0; x <= tableArea+1; x++){
+	for(var y = 0; y <= TABLE_AREA+1; y++){
+		for(var x = 0; x <= TABLE_AREA+1; x++){
 			if(y == 0 || x == 0){
 				defaultStatus[x][y] = "■";
-			}else if(y == tableArea+1 || x == tableArea+1){
+			}else if(y == TABLE_AREA+1 || x == TABLE_AREA+1){
 				defaultStatus[x][y] = "■";
 			}else{
 				defaultStatus[x][y] = " ";
 			}
 		}
 	}
-	var pos = Math.floor(tableArea/2);
+	var pos = Math.floor(TABLE_AREA/2);
 	defaultStatus[pos+1][pos+1] = "○";
 	defaultStatus[pos][pos] = "○";
 	defaultStatus[pos][pos+1] = "●";
@@ -67,32 +68,32 @@ function AI(){
 	/* スコアテーブル */
 	var scoreTable = [];
 	
-	for(var x = 0; x <= tableArea+1; x++){
+	for(var x = 0; x <= TABLE_AREA+1; x++){
 		scoreTable[x] = [];
 	}
 	
-	for(var y = 0; y <= tableArea+1; y++){
-		for(var x = 0; x <= tableArea+1; x++){
+	for(var y = 0; y <= TABLE_AREA+1; y++){
+		for(var x = 0; x <= TABLE_AREA+1; x++){
 			if(y == 0 || x == 0){
 				scoreTable[x][y] = "■";
-			}else if(y == tableArea+1 || x == tableArea+1){
+			}else if(y == TABLE_AREA+1 || x == TABLE_AREA+1){
 				scoreTable[x][y] = "■";
 			}
 		}
 	}
 	
-	for(var i = 1; i <= tableArea-Math.floor(tableArea/2); i++){
-		for(var y = i; y <= tableArea+1-i; y++){
-			for(var x = i; x <= tableArea+1-i; x++){
-				if(x==i || y==i || x==tableArea+1-i || y==tableArea+1-i){
+	for(var i = 1; i <= TABLE_AREA-Math.floor(TABLE_AREA/2); i++){
+		for(var y = i; y <= TABLE_AREA+1-i; y++){
+			for(var x = i; x <= TABLE_AREA+1-i; x++){
+				if(x==i || y==i || x==TABLE_AREA+1-i || y==TABLE_AREA+1-i){
 					scoreTable[x][y] = i;
 				}
 			}
 		}
 	}
 	
-	for(var i = 0; i < tableArea; i += tableArea-2){
-		for(var j = 0; j < tableArea; j += tableArea-2){
+	for(var i = 0; i < TABLE_AREA; i += TABLE_AREA-2){
+		for(var j = 0; j < TABLE_AREA; j += TABLE_AREA-2){
 			for(var y = 1; y <= 2; y++){
 				for(var x = 1; x <= 2; x++){
 					scoreTable[x+i][y+j] = 0;
@@ -101,8 +102,8 @@ function AI(){
 		}
 	}
 	
-	for(var y = 1; y <= tableArea; y += tableArea-1){
-		for(var x = 1; x <= tableArea; x += tableArea-1){
+	for(var y = 1; y <= TABLE_AREA; y += TABLE_AREA-1){
+		for(var x = 1; x <= TABLE_AREA; x += TABLE_AREA-1){
 			scoreTable[x][y] = 9;
 		}
 	}
@@ -139,8 +140,8 @@ function AI(){
 	/* スコアを計算する */
 	this.calculateScore = function(tableStatus,phase){
 		var score = 0;
-		for(var y = 1; y <= tableArea; y++){
-			for(var x = 1; x <= tableArea; x++){
+		for(var y = 1; y <= TABLE_AREA; y++){
+			for(var x = 1; x <= TABLE_AREA; x++){
 				if(tableStatus[x][y] == phase){
 					score += this.scoreTable[x][y];
 				}
@@ -224,8 +225,8 @@ function gameOver(){
 	var countBlack = 0;
 	var countWhite = 0;
 	
-	for(var y = 1; y <= tableArea; y++){
-		for(var x = 1; x <= tableArea; x++){
+	for(var y = 1; y <= TABLE_AREA; y++){
+		for(var x = 1; x <= TABLE_AREA; x++){
 			if(table.status[x][y]=="●"){
 				countBlack += 1;
 			}
@@ -425,8 +426,8 @@ function changePhase(phase){
 function listPossiblePositions(tableStatus,phase){
 	var positions = [];
 	
-	for(var y = 1; y <= tableArea; y++){
-		for(var x = 1; x <= tableArea; x++){
+	for(var y = 1; y <= TABLE_AREA; y++){
+		for(var x = 1; x <= TABLE_AREA; x++){
 			if( checkPlacement(tableStatus,x,y) ){
 				if( countReverse(tableStatus,x,y,phase).length != 0 ){
 					positions.push({x:x,y:y});
