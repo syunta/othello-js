@@ -137,11 +137,11 @@ function AI(){
 	}
 	
 	/* スコアを計算する */
-	this.calculateScore = function(tableStatus){
+	this.calculateScore = function(tableStatus,phase){
 		var score = 0;
 		for(var y = 1; y <= tableArea; y++){
 			for(var x = 1; x <= tableArea; x++){
-				if(tableStatus[x][y] == "○"){
+				if(tableStatus[x][y] == phase){
 					score += this.scoreTable[x][y];
 				}
 			}
