@@ -244,11 +244,11 @@ function showMessage(messege){
 /* 手番を表示 */
 function showPhase(player){
 	if(player == "●"){
-		document.getElementById("phase").innerHTML = "<h1>黒の番です</h1>";
+		document.getElementById("headMessage").innerHTML = "<h1>黒の番です</h1>";
 	}else if(player == "○"){
-		document.getElementById("phase").innerHTML = "<h1>白の番です</h1>";
+		document.getElementById("headMessage").innerHTML = "<h1>白の番です</h1>";
 	}else{
-		document.getElementById("phase").innerHTML = "<h1>"+player+"</h1>";
+		document.getElementById("headMessage").innerHTML = "<h1>"+player+"</h1>";
 	}
 }
 /* メッセージを消す */
