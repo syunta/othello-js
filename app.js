@@ -1,11 +1,11 @@
-const TABLE_AREA = 8;
+var BOARD_SIZE = 8;
 
 //////////////////////HTML描画//////////////////////
 function drawTable(){
 	var text = "";
 
-	for(var y = 1; y <= TABLE_AREA; y++){
-		for(var x = 1; x <= TABLE_AREA; x++){
+	for(var y = 1; y <= BOARD_SIZE; y++){
+		for(var x = 1; x <= BOARD_SIZE; x++){
 			if(x != 1){
 				text +="<div onclick='phaseAction("+x+","+y+")'>" + table.status[x][y] + "</div>";
 			}else{
@@ -38,22 +38,22 @@ function othelloTable(){
 	
 	var defaultStatus = [];
 	
-	for(var x = 0; x <= TABLE_AREA+1; x++){
+	for(var x = 0; x <= BOARD_SIZE+1; x++){
 		defaultStatus[x] = [];
 	}
 
-	for(var y = 0; y <= TABLE_AREA+1; y++){
-		for(var x = 0; x <= TABLE_AREA+1; x++){
+	for(var y = 0; y <= BOARD_SIZE+1; y++){
+		for(var x = 0; x <= BOARD_SIZE+1; x++){
 			if(y == 0 || x == 0){
 				defaultStatus[x][y] = "■";
-			}else if(y == TABLE_AREA+1 || x == TABLE_AREA+1){
+			}else if(y == BOARD_SIZE+1 || x == BOARD_SIZE+1){
 				defaultStatus[x][y] = "■";
 			}else{
 				defaultStatus[x][y] = " ";
 			}
 		}
 	}
-	var pos = Math.floor(TABLE_AREA/2);
+	var pos = Math.floor(BOARD_SIZE/2);
 	defaultStatus[pos+1][pos+1] = "○";
 	defaultStatus[pos][pos] = "○";
 	defaultStatus[pos][pos+1] = "●";
@@ -68,32 +68,32 @@ function AI(){
 	/* スコアテーブル */
 	var scoreTable = [];
 	
-	for(var x = 0; x <= TABLE_AREA+1; x++){
+	for(var x = 0; x <= BOARD_SIZE+1; x++){
 		scoreTable[x] = [];
 	}
 	
-	for(var y = 0; y <= TABLE_AREA+1; y++){
-		for(var x = 0; x <= TABLE_AREA+1; x++){
+	for(var y = 0; y <= BOARD_SIZE+1; y++){
+		for(var x = 0; x <= BOARD_SIZE+1; x++){
 			if(y == 0 || x == 0){
 				scoreTable[x][y] = "■";
-			}else if(y == TABLE_AREA+1 || x == TABLE_AREA+1){
+			}else if(y == BOARD_SIZE+1 || x == BOARD_SIZE+1){
 				scoreTable[x][y] = "■";
 			}
 		}
 	}
 	
-	for(var i = 1; i <= TABLE_AREA-Math.floor(TABLE_AREA/2); i++){
-		for(var y = i; y <= TABLE_AREA+1-i; y++){
-			for(var x = i; x <= TABLE_AREA+1-i; x++){
-				if(x==i || y==i || x==TABLE_AREA+1-i || y==TABLE_AREA+1-i){
+	for(var i = 1; i <= BOARD_SIZE-Math.floor(BOARD_SIZE/2); i++){
+		for(var y = i; y <= BOARD_SIZE+1-i; y++){
+			for(var x = i; x <= BOARD_SIZE+1-i; x++){
+				if(x==i || y==i || x==BOARD_SIZE+1-i || y==BOARD_SIZE+1-i){
 					scoreTable[x][y] = i;
 				}
 			}
 		}
 	}
 	
-	for(var i = 0; i < TABLE_AREA; i += TABLE_AREA-2){
-		for(var j = 0; j < TABLE_AREA; j += TABLE_AREA-2){
+	for(var i = 0; i < BOARD_SIZE; i += BOARD_SIZE-2){
+		for(var j = 0; j < BOARD_SIZE; j += BOARD_SIZE-2){
 			for(var y = 1; y <= 2; y++){
 				for(var x = 1; x <= 2; x++){
 					scoreTable[x+i][y+j] = -5;
@@ -102,8 +102,8 @@ function AI(){
 		}
 	}
 	
-	for(var y = 1; y <= TABLE_AREA; y += TABLE_AREA-1){
-		for(var x = 1; x <= TABLE_AREA; x += TABLE_AREA-1){
+	for(var y = 1; y <= BOARD_SIZE; y += BOARD_SIZE-1){
+		for(var x = 1; x <= BOARD_SIZE; x += BOARD_SIZE-1){
 			scoreTable[x][y] = 10;
 		}
 	}
@@ -126,8 +126,8 @@ function AI(){
 //		console.log(tableStatus.join("\n"));
 		
 		var score = 0;
-		for(var y = 1; y <= TABLE_AREA; y++){
-			for(var x = 1; x <= TABLE_AREA; x++){
+		for(var y = 1; y <= BOARD_SIZE; y++){
+			for(var x = 1; x <= BOARD_SIZE; x++){
 				if(tableStatus[x][y] == phase){
 					score += this.scoreTable[x][y];
 				}
@@ -187,8 +187,8 @@ function aiAction(){
 		currentScore = ai.calculateScore(ai.memory[i],gamePhase);
 		if(maxScore < currentScore){
 			maxScore = currentScore;
-			selectedPosition.x = ai.memory[i][TABLE_AREA+2][0];
-			selectedPosition.y = ai.memory[i][TABLE_AREA+2][1];
+			selectedPosition.x = ai.memory[i][BOARD_SIZE+2][0];
+			selectedPosition.y = ai.memory[i][BOARD_SIZE+2][1];
 		}
 	}
 	
@@ -222,8 +222,8 @@ function gameOver(){
 	var countBlack = 0;
 	var countWhite = 0;
 	
-	for(var y = 1; y <= TABLE_AREA; y++){
-		for(var x = 1; x <= TABLE_AREA; x++){
+	for(var y = 1; y <= BOARD_SIZE; y++){
+		for(var x = 1; x <= BOARD_SIZE; x++){
 			if(table.status[x][y]=="●"){
 				countBlack += 1;
 			}
@@ -422,8 +422,8 @@ function changePhase(phase){
 function listPossiblePositions(tableStatus,phase){
 	var positions = [];
 	
-	for(var y = 1; y <= TABLE_AREA; y++){
-		for(var x = 1; x <= TABLE_AREA; x++){
+	for(var y = 1; y <= BOARD_SIZE; y++){
+		for(var x = 1; x <= BOARD_SIZE; x++){
 			if( checkPlacement(tableStatus,x,y) ){
 				if( countReverse(tableStatus,x,y,phase).length != 0 ){
 					positions.push({x:x,y:y});
