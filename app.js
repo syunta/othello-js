@@ -20,7 +20,7 @@ function drawTable(){
 //////////////////////変数を定義//////////////////////
 var table = new othelloTable();
 var ai = new AI();
-var gamePhase = "●";
+var currentPlayer = "●";
 var passCount = 0;
 var direction = [
 	{nx: 0,ny:-1},
@@ -114,21 +114,21 @@ function AI(){
 	this.memory = [];
 
 	/* 石を置ける場所を網羅検索 */
-	this.search = function(tableStatus,phase){
+	this.search = function(tableStatus,player){
 	
-		this.memory = makeTreeAndReturnLeaf(tableStatus,phase);
+		this.memory = makeTreeAndReturnLeaf(tableStatus,player);
 	
 	}
 	
 	/* スコアを計算する */
-	this.calculateScore = function(tableStatus,phase){
+	this.calculateScore = function(tableStatus,player){
 		
 //		console.log(tableStatus.join("\n"));
 		
 		var score = 0;
 		for(var y = 1; y <= BOARD_SIZE; y++){
 			for(var x = 1; x <= BOARD_SIZE; x++){
-				if(tableStatus[x][y] == phase){
+				if(tableStatus[x][y] == player){
 					score += this.scoreTable[x][y];
 				}
 			}
@@ -148,20 +148,20 @@ function phaseAction(x,y){
 	
 	passCount = 1;
 	
-	if(listPossiblePositions(table.status,gamePhase).length != 0){
+	if(listPossiblePositions(table.status,currentPlayer).length != 0){
 		passCount = 0;
 	}
 
 	if(passCount == 1){
-		gamePhase = changePhase(gamePhase);
+		currentPlayer = changePhase(currentPlayer);
 		showPhase();
 		/* AIの手番 */
 		setTimeout(aiAction,1000);
-	}else if(checkPlacement(table.status,x,y) && countReverse(table.status,x,y,gamePhase).length != 0){
-		put(table.status,x,y,gamePhase);
-		reverse(table.status,x,y,gamePhase);
-		gamePhase = changePhase(gamePhase);
-		showPhase(gamePhase);
+	}else if(checkPlacement(table.status,x,y) && countReverse(table.status,x,y,currentPlayer).length != 0){
+		put(table.status,x,y,currentPlayer);
+		reverse(table.status,x,y,currentPlayer);
+		currentPlayer = changePhase(currentPlayer);
+		showPhase(currentPlayer);
 		drawTable();
 		
 		/* AIの手番 */
@@ -178,13 +178,13 @@ function aiAction(){
 	
 	var gameEndFlag = true;
 	
-	ai.search(table.status,gamePhase);
+	ai.search(table.status,currentPlayer);
 	
 	var maxScore = 0;
 	var selectedPosition = {};
 	var currentScore = 0;
 	for(var i = 0; i < ai.memory.length; i++){
-		currentScore = ai.calculateScore(ai.memory[i],gamePhase);
+		currentScore = ai.calculateScore(ai.memory[i],currentPlayer);
 		if(maxScore < currentScore){
 			maxScore = currentScore;
 			selectedPosition.x = ai.memory[i][BOARD_SIZE+2][0];
@@ -193,14 +193,14 @@ function aiAction(){
 	}
 	
 	if(ai.memory.length != 0){
-		put(table.status,selectedPosition.x,selectedPosition.y,gamePhase);
-		reverse(table.status,selectedPosition.x,selectedPosition.y,gamePhase);
+		put(table.status,selectedPosition.x,selectedPosition.y,currentPlayer);
+		reverse(table.status,selectedPosition.x,selectedPosition.y,currentPlayer);
 	}else{
 		passCount += 1;
 	}
 	ai.forget();
-	gamePhase = changePhase(gamePhase);
-	showPhase(gamePhase);
+	currentPlayer = changePhase(currentPlayer);
+	showPhase(currentPlayer);
 	drawTable();
 	erase();
 	
@@ -208,7 +208,7 @@ function aiAction(){
 		gameOver();
 	}
 
-	if(listPossiblePositions(table.status,gamePhase).length != 0){
+	if(listPossiblePositions(table.status,currentPlayer).length != 0){
 		gameEndFlag = false;
 	}
 
@@ -242,13 +242,13 @@ function showMessage(messege){
 			+= "<h1>"+messege+"</h1>";
 }
 /* 手番を表示 */
-function showPhase(phase){
-	if(phase == "●"){
+function showPhase(player){
+	if(player == "●"){
 		document.getElementById("phase").innerHTML = "<h1>黒の番です</h1>";
-	}else if(phase == "○"){
+	}else if(player == "○"){
 		document.getElementById("phase").innerHTML = "<h1>白の番です</h1>";
 	}else{
-		document.getElementById("phase").innerHTML = "<h1>"+phase+"</h1>";
+		document.getElementById("phase").innerHTML = "<h1>"+player+"</h1>";
 	}
 }
 /* メッセージを消す */
@@ -258,13 +258,13 @@ function erase(){
 }
 
 //////////////////////ツリーを生成//////////////////////
-function makeTreeAndReturnLeaf(tableStatus,phase){
+function makeTreeAndReturnLeaf(tableStatus,player){
 	
 	var depth = 4;
 	var passCnt = 0;
 	var leafList = [];
 	
-	var putStoneChoises = listPossiblePositions(tableStatus,phase);
+	var putStoneChoises = listPossiblePositions(tableStatus,player);
 	
 	for(var i = 0; i < putStoneChoises.length; i++){
 		/* 最初に置いた石の位置を保存 */
@@ -275,7 +275,7 @@ function makeTreeAndReturnLeaf(tableStatus,phase){
 			cloneArray(root),
 			putStoneChoises[i].x,
 			putStoneChoises[i].y,
-			phase,
+			player,
 			depth,
 			passCnt,
 			leafList
@@ -285,20 +285,20 @@ function makeTreeAndReturnLeaf(tableStatus,phase){
 	return leafList;
 }
 
-function makeBranch(node,phase,depth,passCnt,leafList){
+function makeBranch(node,player,depth,passCnt,leafList){
 	
 	if(passCnt < 2 && 0 < depth){
-		var branch = listPossiblePositions(node,phase);
+		var branch = listPossiblePositions(node,player);
 		
 		if( branch.length != 0){
 			passCnt = 0;
 			for(var i = 0; i < branch.length; i++){
-				makeNode(cloneArray(node),branch[i].x,branch[i].y,phase,depth,passCnt,leafList);
+				makeNode(cloneArray(node),branch[i].x,branch[i].y,player,depth,passCnt,leafList);
 			}
 			
 		}else{
 			/* パスが発生した場合 */
-			var nextPhase = changePhase(phase);
+			var nextPhase = changePhase(player);
 			depth -= 1;
 			passCnt += 1;
 			makeBranch(node,nextPhase,depth,passCnt,leafList);
@@ -310,11 +310,11 @@ function makeBranch(node,phase,depth,passCnt,leafList){
 	}
 }
 
-function makeNode(parentNode,x,y,phase,depth,passCnt,leafList){
-	var newNode = put(parentNode,x,y,phase);
-	reverse(newNode,x,y,phase);
+function makeNode(parentNode,x,y,player,depth,passCnt,leafList){
+	var newNode = put(parentNode,x,y,player);
+	reverse(newNode,x,y,player);
 	
-	var nextPhase = changePhase(phase);
+	var nextPhase = changePhase(player);
 	
 	depth -= 1;
 	
@@ -322,29 +322,29 @@ function makeNode(parentNode,x,y,phase,depth,passCnt,leafList){
 }
 
 /* 石を置く */
-function put(tableStatus,x,y,phase){
+function put(tableStatus,x,y,player){
 	
-	if(phase == "●"){
+	if(player == "●"){
 		tableStatus[x][y] = "●";
-	}else if(phase == "○"){
+	}else if(player == "○"){
 		tableStatus[x][y] = "○";
 	}
 	return tableStatus;
 }
 
 /* 石を裏返す */
-function reverse(tableStatus,x,y,phase){
+function reverse(tableStatus,x,y,player){
 
-	if(phase == "●"){
+	if(player == "●"){
 		theFront = "●";
 		theBack = "○";
-	}else if(phase == "○"){
+	}else if(player == "○"){
 		theFront = "○";
 		theBack = "●";
 	}
 
 	/* 石を反転 */
-	var reverse = countReverse(tableStatus,x,y,phase);
+	var reverse = countReverse(tableStatus,x,y,player);
 	
 	for(var i = 0; i < reverse.length; i++){
 		for(var j = 1; j <= reverse[i].count; j++){
@@ -367,14 +367,14 @@ function checkPlacement(tableStatus,x,y){
 }
 
 /* 裏返せる方向と裏返す石の数を数える */
-function countReverse(tableStatus,x,y,phase){
+function countReverse(tableStatus,x,y,player){
 	
 	var result = [];
 	
-	if(phase == "●"){
+	if(player == "●"){
 		var theBack  = "○";
 		var theFront = "●";
-	}else if(phase == "○"){
+	}else if(player == "○"){
 		var theBack  = "●";
 		var theFront = "○";
 	}
@@ -408,10 +408,10 @@ function countReverse(tableStatus,x,y,phase){
 	return result;
 }
 
-function changePhase(phase){
-	if(phase == "●"){
+function changePhase(player){
+	if(player == "●"){
 		var nextPhase = "○";
-	}else if(phase == "○"){
+	}else if(player == "○"){
 		var nextPhase = "●";
 	}
 	return nextPhase;
@@ -419,13 +419,13 @@ function changePhase(phase){
 
 //////////////////////よく使う処理//////////////////////
 /* 盤面の状態を見て置けるところを返す */
-function listPossiblePositions(tableStatus,phase){
+function listPossiblePositions(tableStatus,player){
 	var positions = [];
 	
 	for(var y = 1; y <= BOARD_SIZE; y++){
 		for(var x = 1; x <= BOARD_SIZE; x++){
 			if( checkPlacement(tableStatus,x,y) ){
-				if( countReverse(tableStatus,x,y,phase).length != 0 ){
+				if( countReverse(tableStatus,x,y,player).length != 0 ){
 					positions.push({x:x,y:y});
 				}
 			}
