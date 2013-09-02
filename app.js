@@ -153,14 +153,14 @@ function phaseAction(x,y){
 	}
 
 	if(passCount == 1){
-		currentPlayer = changePhase(currentPlayer);
+		currentPlayer = changePlayer(currentPlayer);
 		showPhase();
 		/* AIの手番 */
 		setTimeout(aiAction,1000);
 	}else if(checkPlacement(table.status,x,y) && countReverse(table.status,x,y,currentPlayer).length != 0){
 		put(table.status,x,y,currentPlayer);
 		reverse(table.status,x,y,currentPlayer);
-		currentPlayer = changePhase(currentPlayer);
+		currentPlayer = changePlayer(currentPlayer);
 		showPhase(currentPlayer);
 		drawTable();
 		
@@ -199,7 +199,7 @@ function aiAction(){
 		passCount += 1;
 	}
 	ai.forget();
-	currentPlayer = changePhase(currentPlayer);
+	currentPlayer = changePlayer(currentPlayer);
 	showPhase(currentPlayer);
 	drawTable();
 	erase();
@@ -298,10 +298,10 @@ function makeBranch(node,player,depth,passCnt,leafList){
 			
 		}else{
 			/* パスが発生した場合 */
-			var nextPhase = changePhase(player);
+			var nextPlayer = changePlayer(player);
 			depth -= 1;
 			passCnt += 1;
-			makeBranch(node,nextPhase,depth,passCnt,leafList);
+			makeBranch(node,nextPlayer,depth,passCnt,leafList);
 		}
 	
 	}else{
@@ -314,11 +314,11 @@ function makeNode(parentNode,x,y,player,depth,passCnt,leafList){
 	var newNode = put(parentNode,x,y,player);
 	reverse(newNode,x,y,player);
 	
-	var nextPhase = changePhase(player);
+	var nextPlayer = changePlayer(player);
 	
 	depth -= 1;
 	
-	makeBranch(newNode,nextPhase,depth,passCnt,leafList);
+	makeBranch(newNode,nextPlayer,depth,passCnt,leafList);
 }
 
 /* 石を置く */
@@ -408,13 +408,13 @@ function countReverse(tableStatus,x,y,player){
 	return result;
 }
 
-function changePhase(player){
+function changePlayer(player){
 	if(player == "●"){
-		var nextPhase = "○";
+		var nextPlayer = "○";
 	}else if(player == "○"){
-		var nextPhase = "●";
+		var nextPlayer = "●";
 	}
-	return nextPhase;
+	return nextPlayer;
 }
 
 //////////////////////よく使う処理//////////////////////
