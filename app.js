@@ -80,21 +80,14 @@ function AI(){
 		[x, x, x, x, x, x, x, x, x, x]
 	];
 
-	/* 置ける場所の記憶 */
-	this.memory = [];
-
 	/* 石を置ける場所を網羅検索 */
 	this.search = function(tableStatus,player){
-	
-		this.memory = makeTreeAndReturnLeaf(tableStatus,player);
-	
+		return makeTreeAndReturnLeaf(tableStatus,player);
 	}
 	
 	/* スコアを計算する */
 	this.calculateScore = function(tableStatus,player){
-		
 //		console.log(tableStatus.join("\n"));
-		
 		var score = 0;
 		for(var y = 1; y <= BOARD_SIZE; y++){
 			for(var x = 1; x <= BOARD_SIZE; x++){
@@ -104,11 +97,6 @@ function AI(){
 			}
 		}
 		return score;
-	}
-	
-	/* 忘れる */
-	this.forget = function(){
-		this.memory.splice(0,this.memory.length);
 	}
 }
 
@@ -148,27 +136,26 @@ function aiAction(){
 	
 	var gameEndFlag = true;
 	
-	ai.search(table.status,currentPlayer);
+	var attackingChoices = ai.search(table.status,currentPlayer);
 	
 	var maxScore = 0;
 	var selectedPosition = {};
 	var currentScore = 0;
-	for(var i = 0; i < ai.memory.length; i++){
-		currentScore = ai.calculateScore(ai.memory[i],currentPlayer);
+	for(var i = 0; i < attackingChoices.length; i++){
+		currentScore = ai.calculateScore(attackingChoices[i],currentPlayer);
 		if(maxScore < currentScore){
 			maxScore = currentScore;
-			selectedPosition.x = ai.memory[i][BOARD_SIZE+2][0];
-			selectedPosition.y = ai.memory[i][BOARD_SIZE+2][1];
+			selectedPosition.x = attackingChoices[i][BOARD_SIZE+2][0];
+			selectedPosition.y = attackingChoices[i][BOARD_SIZE+2][1];
 		}
 	}
 	
-	if(ai.memory.length != 0){
+	if(attackingChoices.length != 0){
 		put(table.status,selectedPosition.x,selectedPosition.y,currentPlayer);
 		reverse(table.status,selectedPosition.x,selectedPosition.y,currentPlayer);
 	}else{
 		passCount += 1;
 	}
-	ai.forget();
 	currentPlayer = changePlayer(currentPlayer);
 	showPhase(currentPlayer);
 	drawTable();
