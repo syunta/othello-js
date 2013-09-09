@@ -66,49 +66,19 @@ function othelloTable(){
 /* AI */
 function AI(){
 	/* スコアテーブル */
-	var scoreTable = [];
-	
-	for(var x = 0; x <= BOARD_SIZE+1; x++){
-		scoreTable[x] = [];
-	}
-	
-	for(var y = 0; y <= BOARD_SIZE+1; y++){
-		for(var x = 0; x <= BOARD_SIZE+1; x++){
-			if(y == 0 || x == 0){
-				scoreTable[x][y] = "■";
-			}else if(y == BOARD_SIZE+1 || x == BOARD_SIZE+1){
-				scoreTable[x][y] = "■";
-			}
-		}
-	}
-	
-	for(var i = 1; i <= BOARD_SIZE-Math.floor(BOARD_SIZE/2); i++){
-		for(var y = i; y <= BOARD_SIZE+1-i; y++){
-			for(var x = i; x <= BOARD_SIZE+1-i; x++){
-				if(x==i || y==i || x==BOARD_SIZE+1-i || y==BOARD_SIZE+1-i){
-					scoreTable[x][y] = i;
-				}
-			}
-		}
-	}
-	
-	for(var i = 0; i < BOARD_SIZE; i += BOARD_SIZE-2){
-		for(var j = 0; j < BOARD_SIZE; j += BOARD_SIZE-2){
-			for(var y = 1; y <= 2; y++){
-				for(var x = 1; x <= 2; x++){
-					scoreTable[x+i][y+j] = -5;
-				}
-			}
-		}
-	}
-	
-	for(var y = 1; y <= BOARD_SIZE; y += BOARD_SIZE-1){
-		for(var x = 1; x <= BOARD_SIZE; x += BOARD_SIZE-1){
-			scoreTable[x][y] = 10;
-		}
-	}
-	
-	this.scoreTable = scoreTable;
+	var x = "■";
+	this.scoreTable = [
+		[x, x, x, x, x, x, x, x, x, x],
+		[x,10,-5, 1, 1, 1, 1,-5,10, x],
+		[x,-5,-5, 2, 2, 2, 2,-5,-5, x],
+		[x, 1, 2, 3, 3, 3, 3, 2, 1, x],
+		[x, 1, 2, 3, 4, 4, 3, 2, 1, x],
+		[x, 1, 2, 3, 4, 4, 3, 2, 1, x],
+		[x, 1, 2, 3, 3, 3, 3, 2, 1, x],
+		[x,-5,-5, 2, 2, 2, 2,-5,-5, x],
+		[x,10,-5, 1, 1, 1, 1,-5,10, x],
+		[x, x, x, x, x, x, x, x, x, x]
+	];
 
 	/* 置ける場所の記憶 */
 	this.memory = [];
